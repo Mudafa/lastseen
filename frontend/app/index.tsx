@@ -20,7 +20,7 @@ export default function HomeScreen() {
             <Text style={styles.kicker}>untitled.jpg</Text>
             <Text style={styles.title}>LastSeen</Text>
             <Text style={styles.subtitle}>
-              Find missing things with camera events and natural language search.
+              Stop asking yourself where you left things. Scan a room, then ask LastSeen what it saw.
             </Text>
           </View>
 
