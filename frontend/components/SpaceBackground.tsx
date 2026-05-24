@@ -1,14 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions, Image } from 'react-native';
 import { colors } from '@/constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
-const stars = Array.from({ length: 64 }).map((_, i) => {
+const stars = Array.from({ length: 72 }).map((_, i) => {
   const left = Math.random() * 100;
-  const top = Math.random() * 85; // keep stars above moon area
-  const size = Math.random() * 2 + 1;
-  const opacity = 0.3 + Math.random() * 0.9;
+  const top = Math.random() * 85;
+  const size = Math.random() * 2 + 0.6;
+  const opacity = 0.25 + Math.random() * 0.9;
   return { id: `s-${i}`, left, top, size, opacity };
 });
 
@@ -19,7 +19,8 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
       <View style={styles.wallpaperMid} />
       <View style={styles.wallpaperBottom} />
 
-      {stars.map(s => (
+      {/* stars */}
+      {stars.map((s) => (
         <View
           key={s.id}
           style={[
@@ -29,10 +30,17 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
         />
       ))}
 
+      {/* large moon */}
       <View style={styles.bigMoon} />
 
+      {/* figure sitting on moon (placeholder) */}
+      <Image source={require('../assets/images/partial-react-logo.png')} style={styles.moonFigure} resizeMode="contain" />
+
+      {/* soft glow and vignette */}
       <View style={styles.softGlowTop} />
       <View style={styles.softGlowBottom} />
+      <View style={styles.vignetteLeft} />
+      <View style={styles.vignetteRight} />
 
       <View style={styles.content} pointerEvents="box-none">
         {children}
@@ -91,15 +99,13 @@ const styles = StyleSheet.create({
     shadowRadius: 28,
     shadowOffset: { width: 0, height: 12 },
   },
-  waveTop: {
+  moonFigure: {
     position: 'absolute',
-    top: '10%',
-    left: -30,
-    right: -30,
-    height: 120,
-    backgroundColor: 'rgba(255,255,255,0.02)',
-    borderRadius: 200,
-    transform: [{ scaleX: 1.6 }],
+    alignSelf: 'center',
+    bottom: -12,
+    width: width * 0.5,
+    height: (width * 0.5) / 2,
+    opacity: 0.95,
   },
   softGlowTop: {
     position: 'absolute',
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
     height: 220,
     backgroundColor: colors.softGlowTop,
     borderRadius: 220,
+    opacity: 0.9,
   },
   softGlowBottom: {
     position: 'absolute',
@@ -118,6 +125,27 @@ const styles = StyleSheet.create({
     height: 260,
     backgroundColor: colors.softGlowBottom,
     borderRadius: 260,
+    opacity: 0.9,
+  },
+  vignetteLeft: {
+    position: 'absolute',
+    left: -60,
+    top: 0,
+    bottom: 0,
+    width: 140,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+    borderTopRightRadius: 220,
+    borderBottomRightRadius: 220,
+  },
+  vignetteRight: {
+    position: 'absolute',
+    right: -60,
+    top: 0,
+    bottom: 0,
+    width: 140,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+    borderTopLeftRadius: 220,
+    borderBottomLeftRadius: 220,
   },
   content: {
     ...StyleSheet.absoluteFillObject,
