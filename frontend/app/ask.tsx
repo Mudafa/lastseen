@@ -89,7 +89,7 @@ export default function AskScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <BackButton onPress={() => router.replace('/')} />
+        <BackButton onPress={() => router.back()} />
         <Text style={styles.title}>Ask</Text>
       </View>
 

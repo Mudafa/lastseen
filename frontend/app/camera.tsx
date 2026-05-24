@@ -11,7 +11,7 @@ export default function CameraScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <BackButton onPress={() => router.replace('/')} />
+        <BackButton onPress={() => router.back()} />
         <Text style={styles.title}>Camera</Text>
       </View>
 
