@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     openai_vision_model: str = "gpt-4o-mini"
     gemini_api_key: str = ""
     gemini_vision_model: str = "gemini-2.5-flash"
-    # auto | openai | gemini — which vision provider to use when both keys exist
-    ai_provider: str = "auto"
+    # openai | gemini | auto — which vision provider to use
+    ai_provider: str = "openai"
 
     diff_ignore_below: float = 0.08
     diff_save_no_ai_below: float = 0.18
