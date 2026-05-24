@@ -98,6 +98,19 @@ export default function AskScreen() {
 
   const send = () => void sendMessage(text);
 
+  useEffect(() => {
+    // ensure the view scrolls to the latest message when `messages` updates
+    if (!scrollRef.current) return;
+    const t = setTimeout(() => {
+      try {
+        scrollRef.current?.scrollToEnd({ animated: true });
+      } catch {
+        // ignore if layout not ready
+      }
+    }, 60);
+    return () => clearTimeout(t);
+  }, [messages]);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
