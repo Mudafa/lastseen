@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@/components/BackButton';
 import { API_BASE_URL } from '@/constants/api';
 import { useDeviceWarnings } from '@/hooks/use-device-warnings';
+import { colors } from '@/constants/theme';
 import { uploadFrame, type UploadFrameResponse } from '@/lib/api';
 
 const INTERVAL_OPTIONS = [3, 5, 10] as const;
@@ -133,7 +134,7 @@ export default function CameraScreen() {
         <CameraView ref={cameraRef} style={styles.preview} facing="back" />
         {uploading ? (
           <View style={styles.previewOverlay}>
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.textLight} />
           </View>
         ) : null}
       </View>
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerSpacer: { flex: 1 },
-  title: { fontSize: 18, fontWeight: '700', color: '#0F172A', flex: 1 },
+  title: { fontSize: 18, fontWeight: '700', color: colors.textLight, flex: 1 },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(239, 68, 68, 0.15)',
   },
   liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444' },
-  liveText: { color: '#0F172A', fontSize: 12, fontWeight: '700' },
+  liveText: { color: colors.textLight, fontSize: 12, fontWeight: '700' },
   previewWrap: {
     width: '86%',
     aspectRatio: 1,
@@ -273,10 +274,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(251, 191, 36, 0.25)',
   },
-  warningText: { flex: 1, color: '#0F172A', fontSize: 13, lineHeight: 18 },
-  apiHint: { color: '#0F172A', fontSize: 11 },
+  warningText: { flex: 1, color: colors.textLight, fontSize: 13, lineHeight: 18 },
+  apiHint: { color: colors.textMuted, fontSize: 11 },
   row: { gap: 8 },
-  label: { color: '#0F172A', fontSize: 13, fontWeight: '600' },
+  label: { color: colors.textLight, fontSize: 13, fontWeight: '600' },
   intervalRow: { flexDirection: 'row', gap: 8 },
   intervalChip: {
     paddingHorizontal: 14,
@@ -290,8 +291,8 @@ const styles = StyleSheet.create({
     borderColor: '#7C3AED',
   },
   intervalChipDisabled: { opacity: 0.5 },
-  intervalChipText: { color: '#0F172A', fontWeight: '600' },
-  intervalChipTextActive: { color: '#0F172A' },
+  intervalChipText: { color: colors.textLight, fontWeight: '600' },
+  intervalChipTextActive: { color: colors.textLight },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -302,8 +303,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   stopBtn: { backgroundColor: '#EF4444' },
-  primaryBtnText: { color: '#0F172A', fontWeight: '700', fontSize: 16 },
-  stopBtnText: { color: '#0F172A' },
+  primaryBtnText: { color: colors.backgroundDeep, fontWeight: '700', fontSize: 16 },
+  stopBtnText: { color: colors.backgroundDeep },
   statusCard: {
     padding: 14,
     borderRadius: 12,
@@ -312,13 +313,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.06)',
     gap: 8,
   },
-  statusTitle: { color: '#0F172A', fontWeight: '700', fontSize: 15 },
-  statusMeta: { color: '#0F172A', fontSize: 12 },
+  statusTitle: { color: colors.textLight, fontWeight: '700', fontSize: 15 },
+  statusMeta: { color: colors.textLight, fontSize: 12 },
   statusRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  statusLabel: { color: '#0F172A', fontSize: 13 },
-  statusValue: { color: '#0F172A', fontSize: 13, fontWeight: '600' },
-  messageText: { color: '#0F172A', fontSize: 13, lineHeight: 18, marginTop: 4 },
-  errorText: { color: '#0F172A', fontSize: 13 },
+  statusLabel: { color: colors.textMuted, fontSize: 13 },
+  statusValue: { color: colors.textLight, fontSize: 13, fontWeight: '600' },
+  messageText: { color: colors.textLight, fontSize: 13, lineHeight: 18, marginTop: 4 },
+  errorText: { color: colors.textLight, fontSize: 13 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 },
   permissionText: { color: '#94A3B8', textAlign: 'center', lineHeight: 22 },
 });

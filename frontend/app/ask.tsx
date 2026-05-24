@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackButton from '@/components/BackButton';
 import { askQuestion } from '@/lib/api';
+import { colors } from '@/constants/theme';
 
 type Message = {
   id: string;
@@ -102,7 +103,7 @@ export default function AskScreen() {
       <View style={styles.header}>
         <BackButton onPress={() => router.back()} />
         <Text style={styles.title}>Ask</Text>
-        {loading ? <ActivityIndicator size="small" color="#7C3AED" /> : <View style={styles.headerSpacer} />}
+        {loading ? <ActivityIndicator size="small" color={colors.accent} /> : <View style={styles.headerSpacer} />}
       </View>
 
       <KeyboardAvoidingView
@@ -119,13 +120,13 @@ export default function AskScreen() {
               style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
               <View style={styles.messageContent}>
                 <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                  <Text
-                    style={[
-                      styles.messageText,
-                      m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
-                    ]}>
-                    {m.text}
-                  </Text>
+                      <Text
+                        style={[
+                          styles.messageText,
+                          m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
+                        ]}>
+                        {m.text}
+                      </Text>
                 </View>
                 {m.imageUrl ? (
                   <View style={styles.imageCard}>
@@ -154,7 +155,7 @@ export default function AskScreen() {
         <View style={styles.inputRow}>
           <TextInput
             placeholder="Ask where something is..."
-            placeholderTextColor="#475569"
+            placeholderTextColor={colors.textMuted}
             value={text}
             onChangeText={setText}
             style={styles.input}
@@ -163,7 +164,7 @@ export default function AskScreen() {
             editable={!loading}
           />
           <Pressable onPress={send} style={styles.sendButton} disabled={loading}>
-            <Ionicons name="send" size={18} color="#0F172A" />
+            <Ionicons name="send" size={18} color={colors.backgroundDeep} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerSpacer: { width: 24 },
-  title: { fontSize: 18, fontWeight: '700', color: '#0F172A', flex: 1 },
+  title: { fontSize: 18, fontWeight: '700', color: colors.textLight, flex: 1 },
   container: { flex: 1, paddingHorizontal: 16, paddingBottom: 8 },
   chipsOverlay: {
     position: 'absolute',
@@ -201,14 +202,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipPressedSmall: { opacity: 0.9 },
-  chipTextSmall: { color: '#0F172A', fontSize: 12, fontWeight: '600' },
+  chipTextSmall: { color: colors.textLight, fontSize: 12, fontWeight: '600' },
   messages: { paddingVertical: 12, gap: 8, paddingBottom: 96 },
   messageRow: { flexDirection: 'row' },
   messageRowUser: { justifyContent: 'flex-end' },
   messageRowBot: { justifyContent: 'flex-start' },
   messageContent: { flexDirection: 'column', maxWidth: '80%' },
   bubble: { maxWidth: '80%', padding: 10, borderRadius: 10 },
-  bubbleUser: { backgroundColor: '#F59E0B', borderBottomRightRadius: 6 },
+  bubbleUser: { backgroundColor: colors.buttonPrimaryBg, borderBottomRightRadius: 6 },
   bubbleBot: {
     backgroundColor: 'transparent',
     borderWidth: 1,
@@ -216,15 +217,15 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 6,
   },
   messageText: { fontSize: 14, lineHeight: 20 },
-  messageTextUser: { color: '#0F172A' },
-  messageTextBot: { color: '#0F172A' },
+  messageTextUser: { color: colors.textLight },
+  messageTextBot: { color: colors.textLight },
   imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },
   input: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.04)',
-    color: '#0F172A',
+    color: colors.textLight,
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
@@ -235,6 +236,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F59E0B',
+    backgroundColor: colors.accent,
   },
 });
