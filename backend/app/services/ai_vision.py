@@ -29,24 +29,54 @@ If nothing useful happened, return:
 }"""
 
 
+class VisionError(Exception):
+    """Raised when the vision LLM call fails."""
+
+
 def is_ai_configured(settings: Settings | None = None) -> bool:
     settings = settings or get_settings()
     return bool(settings.openai_api_key or settings.gemini_api_key)
 
 
-async def analyze_frame(image_bytes: bytes) -> VisionAnalysisResult:
-    settings = get_settings()
+def active_provider(settings: Settings | None = None) -> str | None:
+    settings = settings or get_settings()
+    if settings.ai_provider == "openai" and settings.openai_api_key:
+        return "openai"
+    if settings.ai_provider == "gemini" and settings.gemini_api_key:
+        return "gemini"
     if settings.openai_api_key:
-        return await _analyze_openai(image_bytes, settings)
+        return "openai"
     if settings.gemini_api_key:
-        return await _analyze_gemini(image_bytes, settings)
-    return VisionAnalysisResult(
-        events=[],
-        scene_summary="AI vision not configured.",
-    )
+        return "gemini"
+    return None
 
 
-async def _analyze_openai(image_bytes: bytes, settings: Settings) -> VisionAnalysisResult:
+async def analyze_frame(image_bytes: bytes, content_type: str | None = None) -> VisionAnalysisResult:
+    settings = get_settings()
+    provider = active_provider(settings)
+
+    if provider is None:
+        return VisionAnalysisResult(
+            events=[],
+            scene_summary="AI vision not configured.",
+        )
+
+    mime = _mime_type(image_bytes, content_type)
+
+    try:
+        if provider == "openai":
+            return await _analyze_openai(image_bytes, mime, settings)
+        return await _analyze_gemini(image_bytes, mime, settings)
+    except httpx.HTTPStatusError as exc:
+        detail = exc.response.text[:300] if exc.response else str(exc)
+        raise VisionError(f"Vision API error ({exc.response.status_code}): {detail}") from exc
+    except httpx.RequestError as exc:
+        raise VisionError(f"Vision API request failed: {exc}") from exc
+    except (json.JSONDecodeError, KeyError, IndexError) as exc:
+        raise VisionError(f"Could not parse vision model response: {exc}") from exc
+
+
+async def _analyze_openai(image_bytes: bytes, mime: str, settings: Settings) -> VisionAnalysisResult:
     b64 = base64.standard_b64encode(image_bytes).decode("ascii")
     payload = {
         "model": settings.openai_vision_model,
@@ -58,14 +88,14 @@ async def _analyze_openai(image_bytes: bytes, settings: Settings) -> VisionAnaly
                 "content": [
                     {
                         "type": "image_url",
-                        "image_url": {"url": f"data:image/jpeg;base64,{b64}"},
+                        "image_url": {"url": f"data:{mime};base64,{b64}"},
                     }
                 ],
             },
         ],
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=90.0) as client:
         response = await client.post(
             "https://api.openai.com/v1/chat/completions",
             headers={
@@ -81,13 +111,52 @@ async def _analyze_openai(image_bytes: bytes, settings: Settings) -> VisionAnaly
     return _parse_vision_content(content)
 
 
-async def _analyze_gemini(image_bytes: bytes, settings: Settings) -> VisionAnalysisResult:
-    _ = settings
-    _ = image_bytes
-    return VisionAnalysisResult(
-        events=[],
-        scene_summary="Gemini vision not implemented yet. Use OPENAI_API_KEY for now.",
-    )
+async def _analyze_gemini(image_bytes: bytes, mime: str, settings: Settings) -> VisionAnalysisResult:
+    b64 = base64.standard_b64encode(image_bytes).decode("ascii")
+    model = settings.gemini_vision_model
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": VISION_PROMPT},
+                    {"inline_data": {"mime_type": mime, "data": b64}},
+                ]
+            }
+        ],
+        "generationConfig": {
+            "responseMimeType": "application/json",
+            "temperature": 0.2,
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=90.0) as client:
+        response = await client.post(
+            url,
+            params={"key": settings.gemini_api_key},
+            json=payload,
+        )
+        response.raise_for_status()
+        body = response.json()
+
+    parts = body["candidates"][0]["content"]["parts"]
+    text = next((p["text"] for p in parts if "text" in p), "")
+    if not text:
+        raise VisionError("Gemini returned an empty response.")
+    return _parse_vision_content(text)
+
+
+def _mime_type(image_bytes: bytes, content_type: str | None) -> str:
+    if content_type and content_type.startswith("image/"):
+        return content_type
+    if image_bytes[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if image_bytes[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if image_bytes[:4] == b"RIFF" and image_bytes[8:12] == b"WEBP":
+        return "image/webp"
+    return "image/jpeg"
 
 
 def _parse_vision_content(content: str) -> VisionAnalysisResult:

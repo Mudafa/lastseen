@@ -1,137 +1,150 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import BackButton from '@/components/BackButton';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-type Box = { x: number; y: number; w: number; h: number };
-type Message = { id: string; from: 'user' | 'bot'; text: string; imageUrl?: string; box?: Box };
+import BackButton from '@/components/BackButton';
+import { askQuestion } from '@/lib/api';
+
+type Message = {
+  id: string;
+  from: 'user' | 'bot';
+  text: string;
+  imageUrl?: string;
+};
+
+function formatAskReply(answer: Awaited<ReturnType<typeof askQuestion>>): string {
+  if (answer.location) {
+    const confidence =
+      answer.confidence != null ? ` (${Math.round(answer.confidence * 100)}% confident)` : '';
+    return `Your ${answer.object} was last seen ${answer.location}.${confidence}`;
+  }
+  return answer.message ?? `No location found for "${answer.object}".`;
+}
 
 export default function AskScreen() {
   const router = useRouter();
   const [text, setText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
   const scrollRef = useRef<ScrollView | null>(null);
 
   const sampleQuestions = [
     'Where is my calculator?',
     'Where did I leave my keys?',
-    'When did I last see my notebook?',
+    'Where is my notebook?',
   ];
 
   useEffect(() => {
-    // welcome message
     setMessages([
-      { id: 'm-0', from: 'bot', text: 'Try a sample question or type your own — e.g. "Where is my calculator?"' },
+      {
+        id: 'm-0',
+        from: 'bot',
+        text: 'Ask where something is. Use the camera first so I have events to search.',
+      },
     ]);
   }, []);
 
-  const sendMessage = (messageText: string) => {
+  const sendMessage = async (messageText: string) => {
     const trimmed = messageText.trim();
-    if (!trimmed) return;
+    if (!trimmed || loading) return;
+
     const userMsg: Message = { id: `${Date.now()}-u`, from: 'user', text: trimmed };
     setMessages((m) => [...m, userMsg]);
     setText('');
-
-    // placeholder bot reply (replace with backend call later)
-    const replyId = `${Date.now()}-b`;
-    const demo = generateDemoReply(trimmed);
-    setTimeout(() => {
-      setMessages((m) => [...m, { id: replyId, from: 'bot', text: demo.text, imageUrl: demo.imageUrl, box: demo.box }]);
-      scrollRef.current?.scrollToEnd({ animated: true });
-    }, 700);
+    setLoading(true);
     scrollRef.current?.scrollToEnd({ animated: true });
+
+    const replyId = `${Date.now()}-b`;
+    try {
+      const answer = await askQuestion(trimmed);
+      setMessages((m) => [
+        ...m,
+        {
+          id: replyId,
+          from: 'bot',
+          text: formatAskReply(answer),
+          imageUrl: answer.image_url ?? undefined,
+        },
+      ]);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : 'Could not reach the server.';
+      setMessages((m) => [
+        ...m,
+        {
+          id: replyId,
+          from: 'bot',
+          text: `Error: ${detail}. Check that the backend is running and EXPO_PUBLIC_API_URL is set.`,
+        },
+      ]);
+    } finally {
+      setLoading(false);
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }
   };
 
-  const send = () => sendMessage(text);
-
-  const onClickSample = (q: string) => {
-    // send immediately when sample is clicked
-    sendMessage(q);
-  };
-
-  function generateDemoReply(q: string) {
-    const s = q.toLowerCase();
-    // demo image (public Unsplash image)
-    const deskImage = 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo';
-    if (s.includes('calculator'))
-      return {
-        text: 'You last had your calculator on the desk next to the monitor.',
-        imageUrl: deskImage,
-        box: { x: 60, y: 50, w: 12, h: 10 },
-      };
-    if (s.includes('keys'))
-      return {
-        text: 'Your keys were last seen on the hallway table near the door.',
-        imageUrl: 'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo',
-        box: { x: 28, y: 65, w: 10, h: 8 },
-      };
-    if (s.includes('notebook'))
-      return {
-        text: 'The notebook was last seen on the bookshelf in the study.',
-        imageUrl: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo',
-        box: { x: 42, y: 30, w: 14, h: 12 },
-      };
-    return { text: 'I would search recent scans and tell you where the item was last seen.' };
-  }
+  const send = () => void sendMessage(text);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.header}>
         <BackButton onPress={() => router.back()} />
         <Text style={styles.title}>Ask</Text>
+        {loading ? <ActivityIndicator size="small" color="#7C3AED" /> : <View style={styles.headerSpacer} />}
       </View>
 
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={80}>
-        <ScrollView ref={scrollRef} contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
-            {messages.map((m) => (
-              <View key={m.id} style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
-                <View style={styles.messageContent}>
-                  <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                    <Text style={[styles.messageText, m.from === 'user' ? styles.messageTextUser : styles.messageTextBot]}>{m.text}</Text>
-                  </View>
-
-                  {m.imageUrl ? (
-                    <View style={styles.imageCard}>
-                      <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
-                      {m.box ? (
-                        <View
-                          pointerEvents="none"
-                          style={[
-                            styles.overlayBox,
-                            {
-                              left: `${m.box.x}%`,
-                              top: `${m.box.y}%`,
-                              width: `${m.box.w}%`,
-                              height: `${m.box.h}%`,
-                              borderRadius: 6,
-                            },
-                          ]}
-                        />
-                      ) : null}
-                    </View>
-                  ) : null}
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={80}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.messages}
+          showsVerticalScrollIndicator={false}>
+          {messages.map((m) => (
+            <View
+              key={m.id}
+              style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
+              <View style={styles.messageContent}>
+                <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
+                  <Text
+                    style={[
+                      styles.messageText,
+                      m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
+                    ]}>
+                    {m.text}
+                  </Text>
                 </View>
+                {m.imageUrl ? (
+                  <View style={styles.imageCard}>
+                    <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
+                  </View>
+                ) : null}
               </View>
-            ))}
+            </View>
+          ))}
         </ScrollView>
 
-        {/* Chips overlay positioned above the input */}
         <View style={styles.chipsOverlay} pointerEvents="box-none">
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsOverlayRow}>
             {sampleQuestions.map((q) => (
-              <Pressable key={q} onPress={() => onClickSample(q)} style={({ pressed }) => [styles.chipSmall, pressed && styles.chipPressedSmall]}>
+              <Pressable
+                key={q}
+                disabled={loading}
+                onPress={() => void sendMessage(q)}
+                style={({ pressed }) => [styles.chipSmall, pressed && styles.chipPressedSmall]}>
                 <Text style={styles.chipTextSmall}>{q}</Text>
               </Pressable>
             ))}
@@ -147,8 +160,9 @@ export default function AskScreen() {
             style={styles.input}
             onSubmitEditing={send}
             returnKeyType="send"
+            editable={!loading}
           />
-          <Pressable onPress={send} style={styles.sendButton}>
+          <Pressable onPress={send} style={styles.sendButton} disabled={loading}>
             <Ionicons name="send" size={18} color="#0F172A" />
           </Pressable>
         </View>
@@ -166,15 +180,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
-  },
-  title: { fontSize: 18, fontWeight: '700', color: '#E6F0FF' },
+  headerSpacer: { width: 24 },
+  title: { fontSize: 18, fontWeight: '700', color: '#E6F0FF', flex: 1 },
   container: { flex: 1, paddingHorizontal: 16, paddingBottom: 8 },
   chipsOverlay: {
     position: 'absolute',
@@ -186,19 +193,14 @@ const styles = StyleSheet.create({
   },
   chipsOverlayRow: { alignItems: 'center', paddingLeft: 4, paddingRight: 8, gap: 6 },
   chipSmall: {
-    backgroundColor: 'transparent',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 999,
     marginRight: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
     minHeight: 24,
+    justifyContent: 'center',
   },
-  chipPressedSmall: {
-    opacity: 0.9,
-    transform: [{ scale: 0.995 }],
-  },
+  chipPressedSmall: { opacity: 0.9 },
   chipTextSmall: { color: '#94A3B8', fontSize: 12, fontWeight: '600' },
   messages: { paddingVertical: 12, gap: 8, paddingBottom: 96 },
   messageRow: { flexDirection: 'row' },
@@ -207,18 +209,17 @@ const styles = StyleSheet.create({
   messageContent: { flexDirection: 'column', maxWidth: '80%' },
   bubble: { maxWidth: '80%', padding: 10, borderRadius: 10 },
   bubbleUser: { backgroundColor: '#F59E0B', borderBottomRightRadius: 6 },
-  bubbleBot: { backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.04)', borderBottomLeftRadius: 6 },
-  messageText: { fontSize: 14 },
+  bubbleBot: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.04)',
+    borderBottomLeftRadius: 6,
+  },
+  messageText: { fontSize: 14, lineHeight: 20 },
   messageTextUser: { color: '#0F172A' },
   messageTextBot: { color: '#E6F0FF' },
   imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
-  overlayBox: {
-    position: 'absolute',
-    borderWidth: 2,
-    borderColor: '#7C3AED',
-    backgroundColor: 'rgba(124,58,237,0.06)',
-  },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },
   input: {
     flex: 1,
@@ -228,5 +229,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 12,
   },
-  sendButton: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F59E0B' },
+  sendButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F59E0B',
+  },
 });

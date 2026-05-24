@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.routes import api_router
+from app.services import ai_vision
 
 
 @asynccontextmanager
@@ -38,7 +39,12 @@ def create_app() -> FastAPI:
 
     @app.get("/health")
     async def health():
-        return {"status": "ok"}
+        settings = get_settings()
+        return {
+            "status": "ok",
+            "ai_configured": ai_vision.is_ai_configured(settings),
+            "ai_provider": ai_vision.active_provider(settings),
+        }
 
     return app
 

@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '@/constants/api';
 
 export type FrameScanStatus = 'ignored' | 'saved_no_ai' | 'processed' | 'error';
+// error = vision LLM failed; frame may still be in storage
 
 export type UploadFrameResponse = {
   status: FrameScanStatus;
