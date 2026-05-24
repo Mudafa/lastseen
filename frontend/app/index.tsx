@@ -73,7 +73,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0B1220',
+    backgroundColor: 'transparent',
   },
   scrollContent: {
     flexGrow: 1,
@@ -136,9 +136,9 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
     borderRadius: 12,
-    backgroundColor: '#111827',
+    backgroundColor: 'rgba(17,24,39,0.6)',
     borderWidth: 1,
-    borderColor: '#1F2937',
+    borderColor: 'rgba(31,41,55,0.4)',
   },
   setupHintText: {
     flex: 1,
@@ -150,6 +150,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     paddingTop: 4,
+    backgroundColor: 'transparent',
+    paddingBottom: 24,
   },
   privacyText: {
     flex: 1,

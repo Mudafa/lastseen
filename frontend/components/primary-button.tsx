@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Animated, Pressable, StyleSheet, Text, View, Platform, type ViewStyle } from 'react-native';
 
 type PrimaryButtonProps = {
   label: string;
@@ -20,6 +21,12 @@ export function PrimaryButton({
   style,
 }: PrimaryButtonProps) {
   const isPrimary = variant === 'primary';
+  const [hovered, setHovered] = useState(false);
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const animateTo = (to: number, dur = 150) => {
+    Animated.timing(scale, { toValue: to, duration: dur, useNativeDriver: true }).start();
+  };
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -29,31 +36,43 @@ export function PrimaryButton({
   return (
     <Pressable
       onPress={handlePress}
+      onHoverIn={() => {
+        setHovered(true);
+        animateTo(1.03);
+      }}
+      onHoverOut={() => {
+        setHovered(false);
+        animateTo(1);
+      }}
+      onPressIn={() => animateTo(0.98, 80)}
+      onPressOut={() => animateTo(hovered ? 1.03 : 1, 120)}
       style={({ pressed }) => [
         styles.button,
         isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
+        hovered && styles.buttonHover,
+        hovered && (isPrimary ? styles.buttonPrimaryHover : styles.buttonSecondaryHover),
         pressed && styles.buttonPressed,
         style,
       ]}>
-      <View style={[styles.iconWrap, isPrimary ? styles.iconWrapPrimary : styles.iconWrapSecondary]}>
-        <Ionicons name={icon} size={26} color={isPrimary ? '#0F172A' : '#F8FAFC'} />
-      </View>
-      <View style={styles.textWrap}>
-        <Text style={[styles.label, isPrimary ? styles.labelPrimary : styles.labelSecondary]}>
-          {label}
-        </Text>
-        {subtitle ? (
-          <Text
-            style={[styles.subtitle, isPrimary ? styles.subtitlePrimary : styles.subtitleSecondary]}>
-            {subtitle}
+      <Animated.View style={[{ transform: [{ scale }], flexDirection: 'row', alignItems: 'center' }]}>
+        <View style={[styles.iconWrap, isPrimary ? styles.iconWrapPrimary : styles.iconWrapSecondary]}>
+          <Ionicons name={icon} size={26} color={isPrimary ? '#0F172A' : '#F8FAFC'} />
+        </View>
+
+        <View style={styles.textWrap}>
+          <Text style={[styles.label, isPrimary ? styles.labelPrimary : styles.labelSecondary]}>
+            {label}
           </Text>
-        ) : null}
-      </View>
-      <Ionicons
-        name="chevron-forward"
-        size={22}
-        color={isPrimary ? '#0F172A' : '#94A3B8'}
-      />
+          {subtitle && (hovered || Platform.OS !== 'web') ? (
+            <Text
+              style={[styles.subtitle, isPrimary ? styles.subtitlePrimary : styles.subtitleSecondary]}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+
+        <Ionicons name="chevron-forward" size={22} color={isPrimary ? '#0F172A' : '#94A3B8'} />
+      </Animated.View>
     </Pressable>
   );
 }
@@ -76,6 +95,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E293B',
     borderColor: '#334155',
   },
+  buttonHover: {
+    // hover visual state (scale handled by Animated)
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  buttonPrimaryHover: {
+    backgroundColor: '#FBBF24',
+    borderColor: '#F59E0B',
+  },
+  buttonSecondaryHover: {
+    backgroundColor: '#283444',
+    borderColor: '#415162',
+  },
   buttonPressed: {
     opacity: 0.88,
     transform: [{ scale: 0.99 }],
@@ -96,6 +130,7 @@ const styles = StyleSheet.create({
   textWrap: {
     flex: 1,
     gap: 2,
+    marginLeft: 8,
   },
   label: {
     fontSize: 17,
