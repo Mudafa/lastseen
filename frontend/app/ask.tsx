@@ -21,25 +21,50 @@ export default function AskScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<ScrollView | null>(null);
 
+  const sampleQuestions = [
+    'Where is my calculator?',
+    'Where did I leave my keys?',
+    'When did I last see my notebook?',
+  ];
+
   useEffect(() => {
     // welcome message
-    setMessages([{ id: 'm-0', from: 'bot', text: 'Ask me where something is — e.g. "Where is my calculator?"' }]);
+    setMessages([
+      { id: 'm-0', from: 'bot', text: 'Try a sample question or type your own — e.g. "Where is my calculator?"' },
+    ]);
   }, []);
 
-  const send = () => {
-    if (!text.trim()) return;
-    const userMsg: Message = { id: `${Date.now()}-u`, from: 'user', text: text.trim() };
+  const sendMessage = (messageText: string) => {
+    const trimmed = messageText.trim();
+    if (!trimmed) return;
+    const userMsg: Message = { id: `${Date.now()}-u`, from: 'user', text: trimmed };
     setMessages((m) => [...m, userMsg]);
     setText('');
 
     // placeholder bot reply (replace with backend call later)
     const replyId = `${Date.now()}-b`;
+    const demo = generateDemoReply(trimmed);
     setTimeout(() => {
-      setMessages((m) => [...m, { id: replyId, from: 'bot', text: 'Demo response: backend not connected yet.' }]);
+      setMessages((m) => [...m, { id: replyId, from: 'bot', text: demo }]);
       scrollRef.current?.scrollToEnd({ animated: true });
     }, 700);
     scrollRef.current?.scrollToEnd({ animated: true });
   };
+
+  const send = () => sendMessage(text);
+
+  const onClickSample = (q: string) => {
+    // send immediately when sample is clicked
+    sendMessage(q);
+  };
+
+  function generateDemoReply(q: string) {
+    const s = q.toLowerCase();
+    if (s.includes('calculator')) return "Example answer: You last had your calculator on the desk next to the monitor.";
+    if (s.includes('keys')) return "Example answer: Your keys were last seen on the hallway table near the door.";
+    if (s.includes('notebook')) return "Example answer: The notebook was last seen on the bookshelf in the study.";
+    return "Example answer: I would search recent scans and tell you where the item was last seen.";
+  }
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -60,6 +85,17 @@ export default function AskScreen() {
             </View>
           ))}
         </ScrollView>
+
+        {/* Chips overlay positioned above the input */}
+        <View style={styles.chipsOverlay} pointerEvents="box-none">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsOverlayRow}>
+            {sampleQuestions.map((q) => (
+              <Pressable key={q} onPress={() => onClickSample(q)} style={({ pressed }) => [styles.chipSmall, pressed && styles.chipPressedSmall]}>
+                <Text style={styles.chipTextSmall}>{q}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
 
         <View style={styles.inputRow}>
           <TextInput
@@ -99,6 +135,32 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 18, fontWeight: '700', color: '#E6F0FF' },
   container: { flex: 1, paddingHorizontal: 16, paddingBottom: 8 },
+  chipsOverlay: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    bottom: 74,
+    height: 40,
+    zIndex: 20,
+  },
+  chipsOverlayRow: { alignItems: 'center', paddingLeft: 4, paddingRight: 8, gap: 8 },
+  chipSmall: {
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.04)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 30,
+  },
+  chipPressedSmall: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    transform: [{ scale: 0.985 }],
+  },
+  chipTextSmall: { color: '#E6F0FF', fontSize: 12, fontWeight: '600' },
   messages: { paddingVertical: 12, gap: 12 },
   messageRow: { flexDirection: 'row' },
   messageRowUser: { justifyContent: 'flex-end' },
