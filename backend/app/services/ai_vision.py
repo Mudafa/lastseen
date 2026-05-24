@@ -21,7 +21,7 @@ For each change, log:
 - confidence: 0.0 to 1.0 (use decimals, NOT percentages)
 - evidence: what changed between before and after
 
-If an object disappeared in AFTER, still log it as moved/removed with last known location.
+If an object disappeared in AFTER (hidden behind something, out of frame, or picked up), log action "removed" with location = where it was last visible and evidence explaining it is no longer visible. Do NOT log another "placed" at the old spot.
 
 Return ONLY JSON:
 {{

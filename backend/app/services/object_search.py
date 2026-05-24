@@ -4,8 +4,9 @@ import re
 import httpx
 
 from app.config import get_settings
-from app.models.schemas import AskResponse, ObjectEventRecord
+from app.models.schemas import AskResponse
 from app.services import events_repository
+from app.services.ask_synthesis import synthesize_ask_answer
 from app.services.supabase_client import require_supabase
 
 EXTRACT_PROMPT = """Extract the single object the user is looking for. Reply with JSON only:
@@ -26,7 +27,7 @@ def extract_object_from_question(question: str) -> str:
     return cleaned
 
 
-async def extract_object_with_llm(question: str) -> str:
+async def extract_object_query(question: str) -> str:
     settings = get_settings()
     if not settings.openai_api_key:
         return extract_object_from_question(question)
@@ -59,43 +60,19 @@ async def extract_object_with_llm(question: str) -> str:
 
 async def find_object_location(question: str) -> AskResponse:
     client = require_supabase()
-    settings = get_settings()
+    object_query = await extract_object_query(question)
 
-    object_query = (
-        await extract_object_with_llm(question)
-        if settings.openai_api_key
-        else extract_object_from_question(question)
-    )
-
-    events = events_repository.search_object_events(client, object_query)
+    events = events_repository.search_object_events(client, object_query, limit=15)
     if not events:
-        # Fallback: search by main noun only ("red controller" → "controller")
         tokens = events_repository.tokenize_object_query(object_query)
         if len(tokens) > 1:
             main_noun = max(tokens, key=len)
-            events = events_repository.search_object_events(client, main_noun)
+            events = events_repository.search_object_events(client, main_noun, limit=15)
+
     if not events:
         return AskResponse(
             object=object_query,
             message=f'No memory for "{object_query}". Scan while you move the object.',
         )
 
-    best = events_repository.pick_best_location_event(events)
-    if best is None:
-        return AskResponse(object=object_query, message="No location found.")
-
-    note = ""
-    if events[0].action == "removed" and best.action in ("placed", "moved", "stored"):
-        note = " (May be hidden — showing last known spot.)"
-
-    return AskResponse(
-        object=best.object_name,
-        location=best.location,
-        confidence=best.confidence,
-        scene_summary=(best.scene_summary or "") + note,
-        image_url=best.image_url,
-    )
-
-
-def map_row_to_event(row: dict) -> ObjectEventRecord:
-    return ObjectEventRecord.model_validate(row)
+    return await synthesize_ask_answer(question, object_query, events)

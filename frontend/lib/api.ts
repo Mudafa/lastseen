@@ -17,6 +17,13 @@ export type AskResponse = {
   scene_summary: string | null;
   image_url: string | null;
   message: string | null;
+  answer: string | null;
+  last_seen_location: string | null;
+  last_seen_at: string | null;
+  last_action: string | null;
+  visibility: string | null;
+  what_likely_happened: string | null;
+  timeline_event_count: number;
 };
 
 export async function uploadFrame(imageUri: string): Promise<UploadFrameResponse> {

@@ -16,23 +16,47 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackButton from '@/components/BackButton';
-import { askQuestion } from '@/lib/api';
+import { askQuestion, type AskResponse } from '@/lib/api';
 import { colors } from '@/constants/theme';
 
 type Message = {
   id: string;
   from: 'user' | 'bot';
   text: string;
+  meta?: string;
   imageUrl?: string;
 };
 
-function formatAskReply(answer: Awaited<ReturnType<typeof askQuestion>>): string {
+function formatAskMeta(answer: AskResponse): string | undefined {
+  const lines: string[] = [];
+  if (answer.last_seen_location) {
+    lines.push(`Last seen: ${answer.last_seen_location}`);
+  }
+  if (answer.last_action) {
+    lines.push(`Last action: ${answer.last_action}`);
+  }
+  if (answer.visibility === 'not_visible') {
+    lines.push('Not visible in recent scans');
+  }
+  if (answer.timeline_event_count > 0) {
+    lines.push(`Based on ${answer.timeline_event_count} memory event(s)`);
+  }
+  return lines.length > 0 ? lines.join(' · ') : undefined;
+}
+
+function formatAskReply(answer: AskResponse): string {
+  if (answer.message) {
+    return answer.message;
+  }
+  if (answer.answer) {
+    return answer.answer;
+  }
   if (answer.location) {
     const confidence =
       answer.confidence != null ? ` (${Math.round(answer.confidence * 100)}% confident)` : '';
     return `Your ${answer.object} was last seen ${answer.location}.${confidence}`;
   }
-  return answer.message ?? `No location found for "${answer.object}".`;
+  return `No location found for "${answer.object}".`;
 }
 
 export default function AskScreen() {
@@ -77,6 +101,7 @@ export default function AskScreen() {
           id: replyId,
           from: 'bot',
           text: formatAskReply(answer),
+          meta: formatAskMeta(answer),
           imageUrl: answer.image_url ?? undefined,
         },
       ]);
@@ -136,13 +161,14 @@ export default function AskScreen() {
                   m.from === 'user' ? styles.messageContentUser : styles.messageContentBot,
                 ]}>
                 <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                      <Text
-                        style={[
-                          styles.messageText,
-                          m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
-                        ]}>
-                        {m.text}
-                      </Text>
+                  <Text
+                    style={[
+                      styles.messageText,
+                      m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
+                    ]}>
+                    {m.text}
+                  </Text>
+                  {m.meta ? <Text style={styles.metaText}>{m.meta}</Text> : null}
                 </View>
                 {m.imageUrl ? (
                   <View style={styles.imageCard}>
@@ -246,6 +272,12 @@ const styles = StyleSheet.create({
   messageText: { fontSize: 14, lineHeight: 20 },
   messageTextUser: { color: colors.textLight, textAlign: 'left' },
   messageTextBot: { color: colors.textLight },
+  metaText: {
+    marginTop: 8,
+    fontSize: 12,
+    lineHeight: 17,
+    color: colors.textMuted,
+  },
   imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },

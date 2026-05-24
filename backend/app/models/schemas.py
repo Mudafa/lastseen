@@ -63,6 +63,14 @@ class AskResponse(BaseModel):
     scene_summary: str | None = None
     image_url: str | None = None
     message: str | None = None
+    # Timeline-aware answer (approach A: LLM writes full reply)
+    answer: str | None = None
+    last_seen_location: str | None = None
+    last_seen_at: datetime | None = None
+    last_action: str | None = None
+    visibility: str | None = None  # likely_there | not_visible | unknown
+    what_likely_happened: str | None = None
+    timeline_event_count: int = 0
 
 
 class ObjectEventRecord(BaseModel):
