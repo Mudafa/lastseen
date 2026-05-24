@@ -9,15 +9,10 @@ from app.services import events_repository
 from app.services.supabase_client import require_supabase
 
 EXTRACT_PROMPT = """Extract the single object the user is looking for. Reply with JSON only:
-{"object": "short noun phrase"}
-
-Examples:
-- "Where is my calculator?" -> {"object": "calculator"}
-- "Where did I put the blue hoodie?" -> {"object": "blue hoodie"}"""
+{"object": "short noun phrase"}"""
 
 
 def extract_object_from_question(question: str) -> str:
-    """Pull a likely object name from a natural-language question (regex)."""
     cleaned = question.strip().lower()
     patterns = [
         r"where(?:\s+is|\s+did\s+i\s+put|\s+did\s+i\s+leave|\s+are)\s+(?:my|the|a|an)?\s*(.+?)\??$",
@@ -44,47 +39,61 @@ async def extract_object_with_llm(question: str) -> str:
             {"role": "user", "content": question},
         ],
     }
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {settings.openai_api_key}",
-                "Content-Type": "application/json",
-            },
-            json=payload,
-        )
-        response.raise_for_status()
-        content = response.json()["choices"][0]["message"]["content"]
-
-    data = json.loads(content)
-    obj = data.get("object", "").strip()
-    return obj or extract_object_from_question(question)
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {settings.openai_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+            )
+            response.raise_for_status()
+            content = response.json()["choices"][0]["message"]["content"]
+        obj = json.loads(content).get("object", "").strip()
+        return obj or extract_object_from_question(question)
+    except Exception:
+        return extract_object_from_question(question)
 
 
 async def find_object_location(question: str) -> AskResponse:
     client = require_supabase()
     settings = get_settings()
 
-    if settings.openai_api_key:
-        object_query = await extract_object_with_llm(question)
-    else:
-        object_query = extract_object_from_question(question)
+    object_query = (
+        await extract_object_with_llm(question)
+        if settings.openai_api_key
+        else extract_object_from_question(question)
+    )
 
-    match = events_repository.search_object_events(client, object_query)
-
-    if match is None:
+    events = events_repository.search_object_events(client, object_query)
+    if not events:
+        # Fallback: search by main noun only ("red controller" → "controller")
+        tokens = events_repository.tokenize_object_query(object_query)
+        if len(tokens) > 1:
+            main_noun = max(tokens, key=len)
+            events = events_repository.search_object_events(client, main_noun)
+    if not events:
         return AskResponse(
             object=object_query,
-            message=f'No recent events found for "{object_query}". Try scanning with the camera first.',
+            message=f'No memory for "{object_query}". Scan while you move the object.',
         )
 
+    best = events_repository.pick_best_location_event(events)
+    if best is None:
+        return AskResponse(object=object_query, message="No location found.")
+
+    note = ""
+    if events[0].action == "removed" and best.action in ("placed", "moved", "stored"):
+        note = " (May be hidden — showing last known spot.)"
+
     return AskResponse(
-        object=match.object_name,
-        location=match.location,
-        confidence=match.confidence,
-        scene_summary=match.scene_summary,
-        image_url=match.image_url,
+        object=best.object_name,
+        location=best.location,
+        confidence=best.confidence,
+        scene_summary=(best.scene_summary or "") + note,
+        image_url=best.image_url,
     )
 
 

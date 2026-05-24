@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     # openai | gemini | auto — which vision provider to use
     ai_provider: str = "openai"
 
-    diff_ignore_below: float = 0.08
-    diff_save_no_ai_below: float = 0.18
+    diff_ignore_below: float = 0.02
+    diff_save_no_ai_below: float = 0.04
 
     api_host: str = "0.0.0.0"
     api_port: int = 8000

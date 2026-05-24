@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ObjectAction(str, Enum):
@@ -28,6 +28,16 @@ class VisionEvent(BaseModel):
     location: str
     confidence: float = Field(ge=0.0, le=1.0)
     evidence: str = ""
+
+    @field_validator("confidence", mode="before")
+    @classmethod
+    def normalize_confidence(cls, value: object) -> float:
+        if value is None:
+            return 0.5
+        score = float(value)
+        if score > 1.0:
+            score = score / 100.0
+        return max(0.0, min(score, 1.0))
 
 
 class VisionAnalysisResult(BaseModel):
