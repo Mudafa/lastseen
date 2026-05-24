@@ -120,12 +120,9 @@ export default function AskScreen() {
         meta: formatAskMeta(answer),
         imageUrl: answer.image_url ?? undefined,
       };
-
-      setTimeout(() => {
-        setMessages((m) => [...m, botMsg]);
-        setLoading(false);
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }, 500);
+      setMessages((m) => [...m, botMsg]);
+      setLoading(false);
+      scrollRef.current?.scrollToEnd({ animated: true });
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'Could not reach the server.';
       const errMsg: Message = {
@@ -133,12 +130,9 @@ export default function AskScreen() {
         from: 'bot',
         text: `Error: ${detail}. Check that the backend is running and EXPO_PUBLIC_API_URL is set.`,
       };
-
-      setTimeout(() => {
-        setMessages((m) => [...m, errMsg]);
-        setLoading(false);
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }, 500);
+      setMessages((m) => [...m, errMsg]);
+      setLoading(false);
+      scrollRef.current?.scrollToEnd({ animated: true });
     }
   };
 
