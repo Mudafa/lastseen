@@ -1,17 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 import { PrimaryButton } from '@/components/primary-button';
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from '@/constants/app';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const handleCameraMode = () => {
-    // Camera mode screen — next milestone
+    router.push('/camera');
   };
 
   const handleAskMode = () => {
-    // Ask / search mode screen — next milestone
+    router.push('/ask');
   };
 
   return (
