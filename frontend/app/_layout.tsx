@@ -9,8 +9,8 @@ const LastSeenTheme = {
   colors: {
     ...DarkTheme.colors,
     background: 'transparent',
-    card: '#071029',
-    primary: '#7C3AED',
+    card: '#0B1224',
+    primary: '#F59E0B',
     text: '#E6F0FF',
   },
 };
