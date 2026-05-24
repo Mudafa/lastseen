@@ -18,6 +18,19 @@ const METRICS = [
   { label: 'Private by default', value: 'Your room, your data' },
 ] as const;
 
+const PIXEL_ROOM = [
+  '00000000000000',
+  '00000111110000',
+  '00001122221100',
+  '00011233332110',
+  '00112344443210',
+  '00112344443210',
+  '00011223332110',
+  '00000111110000',
+] as const;
+
+const PIXEL_COLORS = ['transparent', '#1F2937', '#F59E0B', '#FBBF24', '#34D399'] as const;
+
 export default function HomeScreen() {
   const router = useRouter();
 
@@ -35,55 +48,51 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         <View style={styles.heroCard}>
-          <View style={styles.badge}>
-            <Ionicons name="scan" size={14} color="#FBBF24" />
-            <Text style={styles.badgeText}>Room memory, simplified</Text>
+          <View style={styles.badgeRow}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>PIXEL MODE</Text>
+            </View>
+            <View style={styles.badgeAlt}>
+              <Text style={styles.badgeAltText}>v1.0</Text>
+            </View>
           </View>
 
           <Text style={styles.title}>{APP_NAME}</Text>
           <Text style={styles.tagline}>{APP_TAGLINE}</Text>
-          <Text style={styles.description}>{APP_DESCRIPTION}</Text>
+
+          <View style={styles.subtitleRow}>
+            <Ionicons name="scan" size={12} color="#A7F3D0" />
+            <Text style={styles.description}>{APP_DESCRIPTION}</Text>
+          </View>
 
           <View style={styles.heroVisual}>
-            <View style={styles.visualCard}>
-              <View style={styles.visualHeader}>
-                <View style={styles.liveBadge}>
-                  <View style={styles.liveDot} />
-                  <Text style={styles.liveBadgeText}>Live room map</Text>
-                </View>
-                <Text style={styles.visualMeta}>last scan 2m ago</Text>
+            <View style={styles.pixelFrame}>
+              <View style={styles.pixelHeader}>
+                <Text style={styles.pixelHeaderText}>ROOM SCAN</Text>
+                <Text style={styles.pixelHeaderMeta}>READY</Text>
               </View>
 
-              <View style={styles.visualBody}>
-                <View style={styles.objectStack}>
-                  <View style={styles.objectPillPrimary}>
-                    <Ionicons name="key" size={14} color="#0F172A" />
-                    <Text style={styles.objectPillTextPrimary}>Keys near the desk</Text>
+              <View style={styles.pixelCanvas}>
+                {PIXEL_ROOM.map((row, rowIndex) => (
+                  <View key={rowIndex} style={styles.pixelRow}>
+                    {row.split('').map((cell, cellIndex) => {
+                      const colorIndex = Number(cell);
+                      return (
+                        <View
+                          key={`${rowIndex}-${cellIndex}`}
+                          style={[
+                            styles.pixelCell,
+                            { backgroundColor: PIXEL_COLORS[colorIndex] },
+                          ]}
+                        />
+                      );
+                    })}
                   </View>
-                  <View style={styles.objectPillSecondary}>
-                    <Ionicons name="wallet" size={14} color="#E6F0FF" />
-                    <Text style={styles.objectPillTextSecondary}>Wallet by the couch</Text>
-                  </View>
-                </View>
-
-                <View style={styles.visualChart}>
-                  <View style={styles.chartAccent} />
-                  <View style={styles.chartGrid} />
-                  <View style={styles.chartDotTop} />
-                  <View style={styles.chartDotBottom} />
-                </View>
+                ))}
               </View>
 
-              <View style={styles.visualFooter}>
-                <View style={styles.footerChip}>
-                  <Text style={styles.footerChipText}>Camera</Text>
-                </View>
-                <View style={styles.footerChipDim}>
-                  <Text style={styles.footerChipTextDim}>Ask</Text>
-                </View>
-                <View style={styles.footerChipDim}>
-                  <Text style={styles.footerChipTextDim}>Search</Text>
-                </View>
+              <View style={styles.pixelFooter}>
+                <Text style={styles.pixelFooterText}>keys / wallet / notebook</Text>
               </View>
             </View>
           </View>
@@ -153,223 +162,143 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 28,
-    gap: 18,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 24,
+    gap: 14,
   },
   heroCard: {
-    gap: 14,
-    padding: 18,
-    borderRadius: 24,
-    backgroundColor: 'rgba(7, 16, 41, 0.72)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
+    gap: 12,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#0B1220',
+    borderWidth: 2,
+    borderColor: '#334155',
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 8,
   },
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
     alignSelf: 'flex-start',
-    gap: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-    borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.28)',
+    borderRadius: 4,
+    backgroundColor: '#F59E0B',
+    borderWidth: 2,
+    borderColor: '#FDE68A',
+  },
+  badgeAlt: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 4,
+    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+    borderWidth: 2,
+    borderColor: '#475569',
   },
   badgeText: {
-    color: '#FCD34D',
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 0.3,
+    color: '#0F172A',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    fontFamily: 'monospace',
+  },
+  badgeAltText: {
+    color: '#E2E8F0',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontFamily: 'monospace',
   },
   title: {
-    fontSize: 42,
-    lineHeight: 44,
-    fontWeight: '800',
+    fontSize: 36,
+    lineHeight: 38,
+    fontWeight: '900',
     color: '#F8FAFC',
-    letterSpacing: -1.1,
+    letterSpacing: 1.5,
+    fontFamily: 'monospace',
   },
   tagline: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700',
-    color: '#CBD5E1',
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '800',
+    color: '#A7F3D0',
+    letterSpacing: 1.6,
+    textTransform: 'uppercase',
+    fontFamily: 'monospace',
+  },
+  subtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#94A3B8',
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#CBD5E1',
+    fontFamily: 'monospace',
   },
   heroVisual: {
-    paddingTop: 2,
+    paddingTop: 4,
   },
-  visualCard: {
-    gap: 14,
-    padding: 14,
-    borderRadius: 22,
-    backgroundColor: 'rgba(5, 10, 24, 0.84)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
+  pixelFrame: {
+    gap: 10,
+    padding: 12,
+    borderRadius: 6,
+    backgroundColor: '#111827',
+    borderWidth: 2,
+    borderColor: '#64748B',
   },
-  visualHeader: {
+  pixelHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 10,
+    paddingHorizontal: 6,
   },
-  liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.18)',
-  },
-  liveDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 999,
-    backgroundColor: '#34D399',
-  },
-  liveBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#CFFAE6',
-    letterSpacing: 0.3,
-  },
-  visualMeta: {
-    fontSize: 11,
-    color: '#64748B',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  visualBody: {
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'stretch',
-  },
-  objectStack: {
-    flex: 1,
-    gap: 10,
-    justifyContent: 'center',
-  },
-  objectPillPrimary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 16,
-    backgroundColor: '#F59E0B',
-  },
-  objectPillTextPrimary: {
-    flex: 1,
+  pixelHeaderText: {
     fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '800',
-    color: '#0F172A',
+    fontWeight: '900',
+    letterSpacing: 1.6,
+    color: '#F8FAFC',
+    fontFamily: 'monospace',
   },
-  objectPillSecondary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 16,
-    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  objectPillTextSecondary: {
-    flex: 1,
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '700',
-    color: '#D8E4F4',
-  },
-  visualChart: {
-    width: 108,
-    borderRadius: 18,
-    backgroundColor: 'rgba(13, 18, 36, 0.92)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-    overflow: 'hidden',
-    minHeight: 124,
-    position: 'relative',
-  },
-  chartAccent: {
-    position: 'absolute',
-    right: -16,
-    top: -16,
-    width: 76,
-    height: 76,
-    borderRadius: 76,
-    backgroundColor: 'rgba(245, 158, 11, 0.22)',
-  },
-  chartGrid: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.04)',
-  },
-  chartDotTop: {
-    position: 'absolute',
-    left: 18,
-    top: 28,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#F59E0B',
-  },
-  chartDotBottom: {
-    position: 'absolute',
-    left: 36,
-    bottom: 22,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#34D399',
-  },
-  visualFooter: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  footerChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: '#F59E0B',
-  },
-  footerChipDim: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
-  },
-  footerChipText: {
+  pixelHeaderMeta: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#0F172A',
+    letterSpacing: 1.2,
+    color: '#FBBF24',
+    fontFamily: 'monospace',
   },
-  footerChipTextDim: {
+  pixelCanvas: {
+    alignSelf: 'center',
+    padding: 8,
+    backgroundColor: '#020617',
+    borderWidth: 2,
+    borderColor: '#334155',
+  },
+  pixelRow: {
+    flexDirection: 'row',
+  },
+  pixelCell: {
+    width: 10,
+    height: 10,
+    margin: 1,
+  },
+  pixelFooter: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: '#0F172A',
+    borderWidth: 2,
+    borderColor: '#334155',
+  },
+  pixelFooterText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#94A3B8',
+    color: '#A7F3D0',
+    fontFamily: 'monospace',
+    letterSpacing: 0.9,
   },
   metricsRow: {
     flexDirection: 'row',
@@ -382,37 +311,41 @@ const styles = StyleSheet.create({
     flexBasis: '30%',
     minWidth: 100,
     padding: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(15, 23, 42, 0.68)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 6,
+    backgroundColor: '#111827',
+    borderWidth: 2,
+    borderColor: '#475569',
   },
   metricValue: {
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '700',
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '900',
     color: '#F8FAFC',
+    fontFamily: 'monospace',
+    letterSpacing: 0.6,
   },
   metricLabel: {
     marginTop: 4,
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 10,
+    lineHeight: 14,
     color: '#94A3B8',
+    fontFamily: 'monospace',
   },
   actionPanel: {
     gap: 12,
     padding: 16,
-    borderRadius: 22,
-    backgroundColor: 'rgba(2, 6, 23, 0.45)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: 8,
+    backgroundColor: '#0B1220',
+    borderWidth: 2,
+    borderColor: '#334155',
   },
   sectionLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#94A3B8',
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#FCD34D',
     textTransform: 'uppercase',
-    letterSpacing: 1.1,
+    letterSpacing: 1.4,
+    fontFamily: 'monospace',
   },
   actions: {
     gap: 10,
@@ -427,33 +360,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     padding: 14,
-    borderRadius: 18,
-    backgroundColor: 'rgba(7, 16, 41, 0.82)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.07)',
+    borderRadius: 8,
+    backgroundColor: '#0B1220',
+    borderWidth: 2,
+    borderColor: '#475569',
   },
   featureIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 34,
+    height: 34,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(245, 158, 11, 0.16)',
+    backgroundColor: '#1F2937',
+    borderWidth: 2,
+    borderColor: '#F59E0B',
   },
   featureCopy: {
     flex: 1,
     gap: 4,
   },
   featureTitle: {
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: '700',
-    color: '#F8FAFC',
-  },
-  featureBody: {
     fontSize: 13,
     lineHeight: 18,
+    fontWeight: '900',
+    color: '#F8FAFC',
+    fontFamily: 'monospace',
+  },
+  featureBody: {
+    fontSize: 11,
+    lineHeight: 16,
     color: '#94A3B8',
+    fontFamily: 'monospace',
   },
   footerNote: {
     flexDirection: 'row',
@@ -464,8 +401,9 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   footerNoteText: {
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 11,
+    lineHeight: 16,
     color: '#94A3B8',
+    fontFamily: 'monospace',
   },
 });

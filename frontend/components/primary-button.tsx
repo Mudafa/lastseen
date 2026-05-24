@@ -75,56 +75,57 @@ export function PrimaryButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 20,
+    borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1,
   },
   buttonPrimary: {
-    backgroundColor: 'rgba(245, 158, 11, 0.96)',
-    borderColor: 'rgba(251, 191, 36, 0.9)',
-    shadowColor: '#F59E0B',
-    shadowOpacity: 0.28,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
+    backgroundColor: '#F59E0B',
+    borderColor: '#FDE68A',
   },
   buttonSecondary: {
-    backgroundColor: 'rgba(8, 15, 33, 0.82)',
-    borderColor: 'rgba(148, 163, 184, 0.16)',
+    backgroundColor: '#0B1220',
+    borderColor: '#475569',
   },
   buttonHover: {
-    opacity: 0.98,
-    borderColor: 'rgba(251, 191, 36, 0.5)',
+    opacity: 0.95,
+    borderColor: '#FBBF24',
   },
   buttonPressed: {
-    opacity: 0.9,
+    opacity: 0.88,
   },
   iconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
   },
   iconWrapPrimary: {
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    backgroundColor: '#FDE68A',
+    borderColor: '#B45309',
   },
   iconWrapSecondary: {
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    backgroundColor: '#1F2937',
+    borderColor: '#334155',
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
   textWrap: {
     flex: 1,
     gap: 3,
   },
   label: {
-    fontSize: 17,
-    fontWeight: '800',
+    fontSize: 15,
+    fontWeight: '900',
+    letterSpacing: 1,
+    fontFamily: 'monospace',
   },
   labelPrimary: {
     color: '#0F172A',
@@ -133,11 +134,12 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
   },
   subtitle: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: 'monospace',
   },
   subtitlePrimary: {
-    color: 'rgba(15, 23, 42, 0.72)',
+    color: 'rgba(15, 23, 42, 0.76)',
   },
   subtitleSecondary: {
     color: '#94A3B8',
