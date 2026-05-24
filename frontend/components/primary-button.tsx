@@ -75,40 +75,40 @@ export function PrimaryButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 8,
+    borderRadius: 14,
     overflow: 'hidden',
-    borderWidth: 1,
+    borderWidth: 2,
   },
   buttonPrimary: {
-    backgroundColor: '#F59E0B',
-    borderColor: '#FDE68A',
+    backgroundColor: '#D9E6D5',
+    borderColor: '#8FA78B',
   },
   buttonSecondary: {
-    backgroundColor: '#0B1220',
-    borderColor: '#475569',
+    backgroundColor: '#EEF6EB',
+    borderColor: '#A4B7A0',
   },
   buttonHover: {
-    opacity: 0.95,
-    borderColor: '#FBBF24',
+    opacity: 0.96,
+    borderColor: '#6F8B74',
   },
   buttonPressed: {
-    opacity: 0.88,
+    opacity: 0.92,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 6,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
   },
   iconWrapPrimary: {
-    backgroundColor: '#FDE68A',
-    borderColor: '#B45309',
+    backgroundColor: '#243C2F',
+    borderColor: '#E5F2E9',
   },
   iconWrapSecondary: {
-    backgroundColor: '#1F2937',
-    borderColor: '#334155',
+    backgroundColor: '#D8E6D5',
+    borderColor: '#8FA78B',
   },
   inner: {
     flexDirection: 'row',
@@ -122,26 +122,26 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   label: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
     fontFamily: 'monospace',
   },
   labelPrimary: {
-    color: '#0F172A',
+    color: '#243C2F',
   },
   labelSecondary: {
-    color: '#F8FAFC',
+    color: '#243C2F',
   },
   subtitle: {
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 15,
     fontFamily: 'monospace',
   },
   subtitlePrimary: {
-    color: 'rgba(15, 23, 42, 0.76)',
+    color: 'rgba(36, 60, 47, 0.8)',
   },
   subtitleSecondary: {
-    color: '#94A3B8',
+    color: '#5C725E',
   },
 });
