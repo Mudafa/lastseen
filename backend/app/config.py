@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_vision_model: str = "gpt-4o-mini"
     gemini_api_key: str = ""
-    gemini_vision_model: str = "gemini-2.0-flash"
+    gemini_vision_model: str = "gemini-2.5-flash"
     # auto | openai | gemini — which vision provider to use when both keys exist
     ai_provider: str = "auto"
 
