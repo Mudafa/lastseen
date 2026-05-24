@@ -12,14 +12,14 @@ export default function BackButton({ onPress }: { onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
-      onHoverIn={() => animateTo(1.08)}
+      onHoverIn={() => animateTo(1.06)}
       onHoverOut={() => animateTo(1)}
-      onPressIn={() => animateTo(0.96, 80)}
+      onPressIn={() => animateTo(0.98, 80)}
       onPressOut={() => animateTo(1, 120)}
       style={({ pressed }) => [styles.wrap, pressed && styles.pressed]}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
-        <Ionicons name="chevron-back" size={22} color="#E6F0FF" />
+        <Ionicons name="chevron-back" size={20} color="#E6F0FF" />
       </Animated.View>
     </Pressable>
   );
@@ -27,14 +27,14 @@ export default function BackButton({ onPress }: { onPress: () => void }) {
 
 const styles = StyleSheet.create({
   wrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: 'transparent',
   },
   pressed: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
   },
 });

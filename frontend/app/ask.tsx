@@ -95,36 +95,36 @@ export default function AskScreen() {
 
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={80}>
         <ScrollView ref={scrollRef} contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
-          {messages.map((m) => (
-            <View key={m.id} style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
-              <View style={styles.messageContent}>
-                <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                  <Text style={[styles.messageText, m.from === 'user' ? styles.messageTextUser : styles.messageTextBot]}>{m.text}</Text>
-                </View>
-
-                {m.imageUrl ? (
-                  <View style={styles.imageCard}>
-                    <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
-                    {m.box ? (
-                      <View
-                        pointerEvents="none"
-                        style={[
-                          styles.overlayBox,
-                          {
-                            left: `${m.box.x}%`,
-                            top: `${m.box.y}%`,
-                            width: `${m.box.w}%`,
-                            height: `${m.box.h}%`,
-                            borderRadius: Math.max(m.box.w, m.box.h) / 2,
-                          },
-                        ]}
-                      />
-                    ) : null}
+            {messages.map((m) => (
+              <View key={m.id} style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
+                <View style={styles.messageContent}>
+                  <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
+                    <Text style={[styles.messageText, m.from === 'user' ? styles.messageTextUser : styles.messageTextBot]}>{m.text}</Text>
                   </View>
-                ) : null}
+
+                  {m.imageUrl ? (
+                    <View style={styles.imageCard}>
+                      <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
+                      {m.box ? (
+                        <View
+                          pointerEvents="none"
+                          style={[
+                            styles.overlayBox,
+                            {
+                              left: `${m.box.x}%`,
+                              top: `${m.box.y}%`,
+                              width: `${m.box.w}%`,
+                              height: `${m.box.h}%`,
+                              borderRadius: 6,
+                            },
+                          ]}
+                        />
+                      ) : null}
+                    </View>
+                  ) : null}
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
         </ScrollView>
 
         {/* Chips overlay positioned above the input */}
@@ -181,45 +181,43 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     bottom: 80,
-    height: 32,
+    height: 28,
     zIndex: 20,
   },
   chipsOverlayRow: { alignItems: 'center', paddingLeft: 4, paddingRight: 8, gap: 6 },
   chipSmall: {
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: 'transparent',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 999,
-    marginRight: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.04)',
+    marginRight: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 26,
+    minHeight: 24,
   },
   chipPressedSmall: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    transform: [{ scale: 0.99 }],
+    opacity: 0.9,
+    transform: [{ scale: 0.995 }],
   },
-  chipTextSmall: { color: '#E6F0FF', fontSize: 11, fontWeight: '600' },
-  messages: { paddingVertical: 12, gap: 10, paddingBottom: 96 },
+  chipTextSmall: { color: '#94A3B8', fontSize: 12, fontWeight: '600' },
+  messages: { paddingVertical: 12, gap: 8, paddingBottom: 96 },
   messageRow: { flexDirection: 'row' },
   messageRowUser: { justifyContent: 'flex-end' },
   messageRowBot: { justifyContent: 'flex-start' },
   messageContent: { flexDirection: 'column', maxWidth: '80%' },
-  bubble: { maxWidth: '80%', padding: 12, borderRadius: 12 },
-  bubbleUser: { backgroundColor: '#F59E0B', borderBottomRightRadius: 4 },
-  bubbleBot: { backgroundColor: 'rgba(255,255,255,0.04)', borderBottomLeftRadius: 4 },
+  bubble: { maxWidth: '80%', padding: 10, borderRadius: 10 },
+  bubbleUser: { backgroundColor: '#F59E0B', borderBottomRightRadius: 6 },
+  bubbleBot: { backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.04)', borderBottomLeftRadius: 6 },
   messageText: { fontSize: 14 },
   messageTextUser: { color: '#0F172A' },
   messageTextBot: { color: '#E6F0FF' },
-  imageCard: { marginTop: 8, width: '100%', height: 180, borderRadius: 12, overflow: 'hidden' },
+  imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
   overlayBox: {
     position: 'absolute',
     borderWidth: 2,
-    borderColor: '#F59E0B',
-    backgroundColor: 'rgba(245,158,11,0.08)',
+    borderColor: '#7C3AED',
+    backgroundColor: 'rgba(124,58,237,0.06)',
   },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },
   input: {

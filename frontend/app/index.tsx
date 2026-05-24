@@ -23,51 +23,16 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
-          <View style={styles.badge}>
-            <Ionicons name="scan-outline" size={14} color="#F59E0B" />
-            <Text style={styles.badgeText}>Object memory prototype</Text>
-          </View>
-
           <Text style={styles.title}>{APP_NAME}</Text>
           <Text style={styles.tagline}>{APP_TAGLINE}</Text>
-          <Text style={styles.description}>{APP_DESCRIPTION}</Text>
         </View>
 
         <View style={styles.actions}>
-          <Text style={styles.sectionLabel}>Choose how to use this phone</Text>
-
-          <PrimaryButton
-            label="Use as camera"
-            subtitle="Scan the room every few seconds"
-            icon="camera"
-            variant="primary"
-            onPress={handleCameraMode}
-          />
-
-          <PrimaryButton
-            label="Ask where something is"
-            subtitle='e.g. "Where is my calculator?"'
-            icon="search"
-            variant="secondary"
-            onPress={handleAskMode}
-          />
+          <PrimaryButton label="Camera" icon="camera" variant="primary" onPress={handleCameraMode} />
+          <PrimaryButton label="Ask" icon="search" variant="secondary" onPress={handleAskMode} />
         </View>
 
-        <View style={styles.setupHint}>
-          <Ionicons name="phone-portrait-outline" size={18} color="#64748B" />
-          <Text style={styles.setupHintText}>
-            Tip: use one phone as the camera station and another to search — or switch modes on
-            the same device while testing.
-          </Text>
-        </View>
-
-        <View style={styles.privacy}>
-          <Ionicons name="shield-checkmark-outline" size={18} color="#94A3B8" />
-          <Text style={styles.privacyText}>
-            This app uses a camera in your space. Only scan areas you have permission to record,
-            and start with a desk or table before scanning a full room.
-          </Text>
-        </View>
+        {/* Minimal home: no tips shown */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -107,21 +72,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '800',
+    fontSize: 28,
+    fontWeight: '700',
     color: '#F8FAFC',
-    letterSpacing: -0.5,
+    letterSpacing: -0.2,
   },
   tagline: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#E2E8F0',
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#94A3B8',
   },
   description: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#94A3B8',
-    maxWidth: 340,
+    display: 'none',
   },
   actions: {
     gap: 14,

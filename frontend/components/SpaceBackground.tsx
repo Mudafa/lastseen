@@ -1,23 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
+// Reduced, subtle stars for a minimal look
 const STARS = [
-  { l: 5, t: 8, s: 3, o: 0.9 },
-  { l: 12, t: 20, s: 4, o: 0.95 },
-  { l: 22, t: 6, s: 3, o: 0.7 },
-  { l: 32, t: 30, s: 5, o: 0.95 },
-  { l: 44, t: 12, s: 3, o: 0.8 },
-  { l: 56, t: 4, s: 2.5, o: 0.7 },
-  { l: 68, t: 22, s: 5, o: 1 },
-  { l: 78, t: 10, s: 3, o: 0.75 },
-  { l: 88, t: 28, s: 3.5, o: 0.85 },
-  { l: 10, t: 64, s: 3, o: 0.75 },
-  { l: 24, t: 56, s: 3.2, o: 0.7 },
-  { l: 36, t: 78, s: 4.5, o: 0.95 },
-  { l: 52, t: 60, s: 3.5, o: 0.9 },
-  { l: 66, t: 72, s: 3, o: 0.75 },
-  { l: 82, t: 52, s: 4, o: 0.95 },
-  { l: 92, t: 74, s: 2.5, o: 0.7 },
+  { l: 12, t: 18, s: 2.5, o: 0.35 },
+  { l: 40, t: 8, s: 2, o: 0.28 },
+  { l: 68, t: 24, s: 2.2, o: 0.3 },
+  { l: 24, t: 62, s: 2, o: 0.22 },
+  { l: 80, t: 72, s: 2.6, o: 0.3 },
 ];
 
 export default function SpaceBackground({ children }: { children: React.ReactNode }) {
@@ -55,23 +45,23 @@ const styles = StyleSheet.create({
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#030417',
+    backgroundColor: '#04050A',
   },
+  // remove heavy nebula - keep a single subtle tint
   nebula: {
     position: 'absolute',
-    right: -80,
-    top: -120,
-    width: 420,
-    height: 420,
-    borderRadius: 420,
-    backgroundColor: 'rgba(124,58,237,0.12)',
-    transform: [{ rotate: '20deg' }],
+    right: -40,
+    top: -60,
+    width: 220,
+    height: 220,
+    borderRadius: 220,
+    backgroundColor: 'rgba(124,58,237,0.06)',
+    transform: [{ rotate: '12deg' }],
   },
   star: {
     position: 'absolute',
     borderRadius: 2,
     backgroundColor: '#fff',
-    transform: [{ translateX: 0 }, { translateY: 0 }],
   },
   content: {
     ...StyleSheet.absoluteFillObject,
