@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View, Dimensions, Text } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { Animated, StyleSheet, View, Dimensions, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { colors } from '@/constants/theme';
 
@@ -13,8 +13,52 @@ const stars = Array.from({ length: 72 }).map((_, i) => {
   return { id: `s-${i}`, left, top, size, opacity };
 });
 
+const starMotion = stars.map((star) => {
+  const seed = Number(star.id.split('-')[1]) || 0;
+  const driftX = (Math.random() * 2 - 1) * 18;
+  const driftY = (Math.random() * 2 - 1) * 18;
+  const duration = 18000 + (seed % 7) * 1800 + Math.random() * 4500;
+
+  return {
+    progress: new Animated.Value(0),
+    driftX,
+    driftY,
+    duration,
+  };
+});
+
 export default function SpaceBackground({ children }: { children: React.ReactNode }) {
   const version = Constants.expoConfig?.version ?? '1.0.0';
+
+  const animatedStars = useMemo(
+    () => stars.map((star, index) => ({ ...star, motion: starMotion[index] })),
+    [],
+  );
+
+  useEffect(() => {
+    const loops = starMotion.map((motion) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(motion.progress, {
+            toValue: 1,
+            duration: motion.duration,
+            useNativeDriver: true,
+          }),
+          Animated.timing(motion.progress, {
+            toValue: 0,
+            duration: motion.duration,
+            useNativeDriver: true,
+          }),
+        ]),
+      ),
+    );
+
+    loops.forEach((loop) => loop.start());
+
+    return () => {
+      loops.forEach((loop) => loop.stop());
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -23,12 +67,32 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
       <View style={styles.wallpaperBottom} />
 
       {/* stars */}
-      {stars.map((s) => (
-        <View
+      {animatedStars.map((s) => (
+        <Animated.View
           key={s.id}
           style={[
             styles.star,
-            { left: `${s.left}%`, top: `${s.top}%`, width: s.size, height: s.size, opacity: s.opacity },
+            {
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: s.size,
+              height: s.size,
+              opacity: s.opacity,
+              transform: [
+                {
+                  translateX: s.motion.progress.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, s.motion.driftX, 0],
+                  }),
+                },
+                {
+                  translateY: s.motion.progress.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, s.motion.driftY, 0],
+                  }),
+                },
+              ],
+            },
           ]}
         />
       ))}
