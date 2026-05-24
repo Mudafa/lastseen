@@ -2,8 +2,6 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import SpaceBackground from '@/components/SpaceBackground';
 import { colors } from '@/constants/theme';
 
 export default function HomeScreen() {
@@ -14,32 +12,30 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <SpaceBackground>
-        <View style={styles.container}>
-          <View style={styles.heroCard}>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>untitled.jpg</Text>
-            </View>
+      <View style={styles.container}>
+        <View style={styles.heroCard}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>untitled.jpg</Text>
+          </View>
 
-            <Text style={styles.title}>LastSeen</Text>
-            <Text style={styles.subtitle}>
-              Stop wondering where you put things. Scan a room, then ask LastSeen what it saw.
-            </Text>
+          <Text style={styles.title}>LastSeen</Text>
+          <Text style={styles.subtitle}>
+            Stop wondering where you put things. Scan a room, then ask LastSeen what it saw.
+          </Text>
 
-            <View style={styles.actions}>
-              <Pressable style={styles.primaryButton} onPress={handleCameraMode} accessibilityRole="button">
-                <Ionicons name="camera" size={20} color={colors.backgroundDeep} />
-                <Text style={styles.primaryButtonText}>Camera</Text>
-              </Pressable>
+          <View style={styles.actions}>
+            <Pressable style={styles.primaryButton} onPress={handleCameraMode} accessibilityRole="button">
+              <Ionicons name="camera" size={20} color={colors.backgroundDeep} />
+              <Text style={styles.primaryButtonText}>Camera</Text>
+            </Pressable>
 
-              <Pressable style={styles.secondaryButton} onPress={handleAskMode} accessibilityRole="button">
-                <Ionicons name="search" size={20} color={colors.textLight} />
-                <Text style={styles.secondaryButtonText}>Ask</Text>
-              </Pressable>
-            </View>
+            <Pressable style={styles.secondaryButton} onPress={handleAskMode} accessibilityRole="button">
+              <Ionicons name="search" size={20} color={colors.textLight} />
+              <Text style={styles.secondaryButtonText}>Ask</Text>
+            </Pressable>
           </View>
         </View>
-      </SpaceBackground>
+      </View>
     </SafeAreaView>
   );
 }

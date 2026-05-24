@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Dimensions, Text } from 'react-native';
+import Constants from 'expo-constants';
 import { colors } from '@/constants/theme';
 
 const { width, height } = Dimensions.get('window');
@@ -13,6 +14,8 @@ const stars = Array.from({ length: 72 }).map((_, i) => {
 });
 
 export default function SpaceBackground({ children }: { children: React.ReactNode }) {
+  const version = Constants.expoConfig?.version ?? '1.0.0';
+
   return (
     <View style={styles.container}>
       <View style={styles.wallpaperTop} />
@@ -33,14 +36,15 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
       {/* large moon */}
       <View style={styles.bigMoon} />
 
-      {/* figure sitting on moon (placeholder) */}
-      <Image source={require('../assets/images/partial-react-logo.png')} style={styles.moonFigure} resizeMode="contain" />
-
       {/* soft glow and vignette */}
       <View style={styles.softGlowTop} />
       <View style={styles.softGlowBottom} />
       <View style={styles.vignetteLeft} />
       <View style={styles.vignetteRight} />
+
+      <View style={styles.versionBadge} pointerEvents="none">
+        <Text style={styles.versionText}>v{version}</Text>
+      </View>
 
       <View style={styles.content} pointerEvents="box-none">
         {children}
@@ -99,14 +103,6 @@ const styles = StyleSheet.create({
     shadowRadius: 28,
     shadowOffset: { width: 0, height: 12 },
   },
-  moonFigure: {
-    position: 'absolute',
-    alignSelf: 'center',
-    bottom: -12,
-    width: width * 0.5,
-    height: (width * 0.5) / 2,
-    opacity: 0.95,
-  },
   softGlowTop: {
     position: 'absolute',
     left: -40,
@@ -146,6 +142,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.18)',
     borderTopLeftRadius: 220,
     borderBottomLeftRadius: 220,
+  },
+  versionBadge: {
+    position: 'absolute',
+    top: 32,
+    right: 16,
+    zIndex: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(7, 10, 18, 0.26)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+  },
+  versionText: {
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   content: {
     ...StyleSheet.absoluteFillObject,
