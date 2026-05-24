@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackButton from '@/components/BackButton';
+import SpaceBackground from '@/components/SpaceBackground';
 import { API_BASE_URL } from '@/constants/api';
 import { useDeviceWarnings } from '@/hooks/use-device-warnings';
 import { colors } from '@/constants/theme';
@@ -88,46 +89,51 @@ export default function CameraScreen() {
 
   if (!permission) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.centered}>
-          <ActivityIndicator color="#7C3AED" />
-        </View>
-      </SafeAreaView>
+      <SpaceBackground>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.centered}>
+            <ActivityIndicator color="#7C3AED" />
+          </View>
+        </SafeAreaView>
+      </SpaceBackground>
     );
   }
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
-          <BackButton onPress={() => router.back()} />
-          <Text style={styles.title}>Camera</Text>
-        </View>
-        <View style={styles.centered}>
-          <Ionicons name="camera-outline" size={48} color="#94A3B8" />
-          <Text style={styles.permissionText}>Camera access is required to scan the room.</Text>
-          <Pressable style={styles.primaryBtn} onPress={requestPermission}>
-            <Text style={styles.primaryBtnText}>Allow camera</Text>
-          </Pressable>
-        </View>
-      </SafeAreaView>
+      <SpaceBackground>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.header}>
+            <BackButton onPress={() => router.back()} />
+            <Text style={styles.title}>Camera</Text>
+          </View>
+          <View style={styles.centered}>
+            <Ionicons name="camera-outline" size={48} color="#94A3B8" />
+            <Text style={styles.permissionText}>Camera access is required to scan the room.</Text>
+            <Pressable style={styles.primaryBtn} onPress={requestPermission}>
+              <Text style={styles.primaryBtnText}>Allow camera</Text>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </SpaceBackground>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <View style={styles.header}>
-        <BackButton onPress={() => router.back()} />
-        <Text style={styles.title}>Camera station</Text>
-        {scanning ? (
-          <View style={styles.liveBadge}>
-            <View style={styles.liveDot} />
-            <Text style={styles.liveText}>Live</Text>
-          </View>
-        ) : (
-          <View style={styles.headerSpacer} />
-        )}
-      </View>
+    <SpaceBackground>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+        <View style={styles.header}>
+          <BackButton onPress={() => router.back()} />
+          <Text style={styles.title}>Camera station</Text>
+          {scanning ? (
+            <View style={styles.liveBadge}>
+              <View style={styles.liveDot} />
+              <Text style={styles.liveText}>Live</Text>
+            </View>
+          ) : (
+            <View style={styles.headerSpacer} />
+          )}
+        </View>
 
       {/* square camera preview centered */}
       <View style={styles.previewWrap}>
@@ -218,7 +224,8 @@ export default function CameraScreen() {
           ) : null}
         </View>
       </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </SpaceBackground>
   );
 }
 

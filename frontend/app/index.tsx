@@ -1,20 +1,27 @@
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/constants/theme';
+import SpaceBackground from '@/components/SpaceBackground';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [showDescription, setShowDescription] = useState(false);
 
+  useEffect(() => {
+    void import('./camera');
+    void import('./ask');
+  }, []);
+
   const handleCameraMode = () => router.push('/camera');
   const handleAskMode = () => router.push('/ask');
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <View style={styles.container}>
+    <SpaceBackground>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+        <View style={styles.container}>
         <View style={styles.headerArea}>
           <View style={styles.topBar}>
             <View style={styles.brandDot} />
@@ -49,12 +56,12 @@ export default function HomeScreen() {
           </Text>
 
           <View style={styles.actions}>
-            <Pressable style={styles.primaryButton} onPress={handleCameraMode} accessibilityRole="button">
+            <Pressable style={styles.primaryButton} onPressIn={handleCameraMode} accessibilityRole="button">
               <Ionicons name="camera" size={20} color={colors.backgroundDeep} />
               <Text style={styles.primaryButtonText}>Camera</Text>
             </Pressable>
 
-            <Pressable style={styles.secondaryButton} onPress={handleAskMode} accessibilityRole="button">
+            <Pressable style={styles.secondaryButton} onPressIn={handleAskMode} accessibilityRole="button">
               <Ionicons name="search" size={20} color={colors.textLight} />
               <Text style={styles.secondaryButtonText}>Ask</Text>
             </Pressable>
@@ -64,8 +71,9 @@ export default function HomeScreen() {
         <View style={styles.footer}>
           <Text style={styles.footerText}>untitled.jpg · all rights reserved</Text>
         </View>
-      </View>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </SpaceBackground>
   );
 }
 

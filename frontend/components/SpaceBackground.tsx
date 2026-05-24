@@ -1,64 +1,48 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, View, Dimensions, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { colors } from '@/constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
-const stars = Array.from({ length: 72 }).map((_, i) => {
+const stars = Array.from({ length: 36 }).map((_, i) => {
   const left = Math.random() * 100;
   const top = Math.random() * 85;
   const size = Math.random() * 2 + 0.6;
   const opacity = 0.25 + Math.random() * 0.9;
-  return { id: `s-${i}`, left, top, size, opacity };
-});
-
-const starMotion = stars.map((star) => {
-  const seed = Number(star.id.split('-')[1]) || 0;
-  const driftX = (Math.random() * 2 - 1) * 18;
-  const driftY = (Math.random() * 2 - 1) * 18;
-  const duration = 18000 + (seed % 7) * 1800 + Math.random() * 4500;
-
-  return {
-    progress: new Animated.Value(0),
-    driftX,
-    driftY,
-    duration,
-  };
+  const driftX = (Math.random() * 2 - 1) * (8 + (i % 4) * 2);
+  const driftY = (Math.random() * 2 - 1) * (8 + (i % 3) * 2);
+  return { id: `s-${i}`, left, top, size, opacity, driftX, driftY };
 });
 
 export default function SpaceBackground({ children }: { children: React.ReactNode }) {
   const version = Constants.expoConfig?.version ?? '1.0.0';
+  const drift = useRef(new Animated.Value(0)).current;
 
-  const animatedStars = useMemo(
-    () => stars.map((star, index) => ({ ...star, motion: starMotion[index] })),
-    [],
-  );
+  const animatedStars = useMemo(() => stars, []);
 
   useEffect(() => {
-    const loops = starMotion.map((motion) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(motion.progress, {
-            toValue: 1,
-            duration: motion.duration,
-            useNativeDriver: true,
-          }),
-          Animated.timing(motion.progress, {
-            toValue: 0,
-            duration: motion.duration,
-            useNativeDriver: true,
-          }),
-        ]),
-      ),
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(drift, {
+          toValue: 1,
+          duration: 22000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(drift, {
+          toValue: 0,
+          duration: 22000,
+          useNativeDriver: true,
+        }),
+      ]),
     );
 
-    loops.forEach((loop) => loop.start());
+    loop.start();
 
     return () => {
-      loops.forEach((loop) => loop.stop());
+      loop.stop();
     };
-  }, []);
+  }, [drift]);
 
   return (
     <View style={styles.container}>
@@ -80,15 +64,15 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
               opacity: s.opacity,
               transform: [
                 {
-                  translateX: s.motion.progress.interpolate({
+                  translateX: drift.interpolate({
                     inputRange: [0, 0.5, 1],
-                    outputRange: [0, s.motion.driftX, 0],
+                    outputRange: [0, s.driftX, 0],
                   }),
                 },
                 {
-                  translateY: s.motion.progress.interpolate({
+                  translateY: drift.interpolate({
                     inputRange: [0, 0.5, 1],
-                    outputRange: [0, s.motion.driftY, 0],
+                    outputRange: [0, s.driftY, 0],
                   }),
                 },
               ],

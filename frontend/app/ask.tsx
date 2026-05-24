@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackButton from '@/components/BackButton';
+import SpaceBackground from '@/components/SpaceBackground';
 import { askQuestion, type AskResponse } from '@/lib/api';
 import { colors } from '@/constants/theme';
 
@@ -152,12 +153,13 @@ export default function AskScreen() {
   }, [messages]);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <View style={styles.header}>
-        <BackButton onPress={() => router.back()} />
-        <Text style={styles.title}>Ask</Text>
-        {loading ? <ActivityIndicator size="small" color={colors.accent} /> : <View style={styles.headerSpacer} />}
-      </View>
+    <SpaceBackground>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+        <View style={styles.header}>
+          <BackButton onPress={() => router.back()} />
+          <Text style={styles.title}>Ask</Text>
+          {loading ? <ActivityIndicator size="small" color={colors.accent} /> : <View style={styles.headerSpacer} />}
+        </View>
 
       <KeyboardAvoidingView
         style={styles.container}
@@ -238,7 +240,8 @@ export default function AskScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </SpaceBackground>
   );
 }
 
