@@ -116,9 +116,12 @@ export default function AskScreen() {
           showsVerticalScrollIndicator={false}>
           {messages.map((m) => (
             <View
-              key={m.id}
-              style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
-              <View style={styles.messageContent}>
+                key={m.id}
+                style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
+                <View style={[
+                  styles.messageContent,
+                  m.from === 'user' ? styles.messageContentUser : styles.messageContentBot,
+                ]}>
                 <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
                       <Text
                         style={[
@@ -204,20 +207,28 @@ const styles = StyleSheet.create({
   chipPressedSmall: { opacity: 0.9 },
   chipTextSmall: { color: colors.textLight, fontSize: 12, fontWeight: '600' },
   messages: { paddingVertical: 12, gap: 8, paddingBottom: 96 },
-  messageRow: { flexDirection: 'row' },
-  messageRowUser: { justifyContent: 'flex-end' },
-  messageRowBot: { justifyContent: 'flex-start' },
-  messageContent: { flexDirection: 'column', maxWidth: '80%' },
+  messageRow: { flexDirection: 'row', width: '100%' },
+  messageRowUser: { justifyContent: 'flex-end', alignItems: 'flex-end', paddingLeft: 12, paddingRight: 0 },
+  messageRowBot: { justifyContent: 'flex-start', alignItems: 'flex-start', paddingHorizontal: 12 },
+  messageContent: { flexDirection: 'column', maxWidth: '78%' },
+  messageContentUser: { alignItems: 'flex-end', alignSelf: 'flex-end' },
+  messageContentBot: { alignItems: 'flex-start', alignSelf: 'flex-start' },
   bubble: { maxWidth: '80%', padding: 10, borderRadius: 10 },
-  bubbleUser: { backgroundColor: colors.buttonPrimaryBg, borderBottomRightRadius: 6 },
+  bubbleUser: {
+    backgroundColor: colors.buttonPrimaryBg,
+    borderBottomRightRadius: 6,
+    marginRight: 0,
+    alignSelf: 'flex-end',
+  },
   bubbleBot: {
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.04)',
     borderBottomLeftRadius: 6,
+    marginLeft: 8,
   },
   messageText: { fontSize: 14, lineHeight: 20 },
-  messageTextUser: { color: colors.textLight },
+  messageTextUser: { color: colors.textLight, textAlign: 'left' },
   messageTextBot: { color: colors.textLight },
   imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
