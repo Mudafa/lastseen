@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     supabase_service_role_key: str = ""
 
     openai_api_key: str = ""
+    openai_vision_model: str = "gpt-4o-mini"
     gemini_api_key: str = ""
 
     diff_ignore_below: float = 0.08

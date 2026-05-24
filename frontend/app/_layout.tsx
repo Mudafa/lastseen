@@ -21,6 +21,8 @@ export default function RootLayout() {
       <SpaceBackground>
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="camera" />
+          <Stack.Screen name="ask" />
         </Stack>
       </SpaceBackground>
       <StatusBar style="light" />

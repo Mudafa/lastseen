@@ -1,6 +1,8 @@
 import re
 
 from app.models.schemas import AskResponse, ObjectEventRecord
+from app.services import events_repository
+from app.services.supabase_client import require_supabase
 
 
 def extract_object_from_question(question: str) -> str:
@@ -19,14 +21,21 @@ def extract_object_from_question(question: str) -> str:
 
 
 async def find_object_location(object_query: str) -> AskResponse:
-    """
-    Search Supabase object_events for the best matching recent record.
-    TODO: implement Supabase query.
-    """
-    _ = object_query
+    client = require_supabase()
+    match = events_repository.search_object_events(client, object_query)
+
+    if match is None:
+        return AskResponse(
+            object=object_query,
+            message=f"No recent events found for “{object_query}”.",
+        )
+
     return AskResponse(
-        object=object_query,
-        message="Object search not wired to Supabase yet.",
+        object=match.object_name,
+        location=match.location,
+        confidence=match.confidence,
+        scene_summary=match.scene_summary,
+        image_url=match.image_url,
     )
 
 
