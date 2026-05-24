@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import BackButton from '@/components/BackButton';
 
 type Message = { id: string; from: 'user' | 'bot'; text: string };
 
@@ -69,9 +70,7 @@ export default function AskScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={22} color="#E6F0FF" />
-        </Pressable>
+        <BackButton onPress={() => router.replace('/')} />
         <Text style={styles.title}>Ask</Text>
       </View>
 

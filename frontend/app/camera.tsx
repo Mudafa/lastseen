@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import BackButton from '@/components/BackButton';
 
 export default function CameraScreen() {
   const router = useRouter();
@@ -10,9 +11,7 @@ export default function CameraScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={22} color="#E6F0FF" />
-        </Pressable>
+        <BackButton onPress={() => router.replace('/')} />
         <Text style={styles.title}>Camera</Text>
       </View>
 
