@@ -5,19 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PrimaryButton } from '@/components/primary-button';
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from '@/constants/app';
 
-const PIXEL_ROOM = [
-  '00000000000000',
-  '00000111110000',
-  '00001122221100',
-  '00011233332110',
-  '00112344443210',
-  '00112344443210',
-  '00011223332110',
-  '00000111110000',
-] as const;
-
-const PIXEL_COLORS = ['transparent', '#163326', '#4ADE80', '#86EFAC', '#E5F2E9'] as const;
-
 export default function HomeScreen() {
   const router = useRouter();
 
@@ -34,66 +21,63 @@ export default function HomeScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.shell}>
-          <View style={styles.headerRow}>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>GAME BOY</Text>
-            </View>
-            <Text style={styles.version}>v1</Text>
+        <View style={styles.device}>
+          <View style={styles.topLabelRow}>
+            <View style={styles.powerLight} />
+            <Text style={styles.topLabel}>Nintendo GAME BOY</Text>
+            <Text style={styles.topVersion}>DMG-01</Text>
           </View>
-
-          <Text style={styles.title}>{APP_NAME}</Text>
-          <Text style={styles.tagline}>{APP_TAGLINE}</Text>
 
           <View style={styles.screenFrame}>
             <View style={styles.screenTopBar}>
-              <Text style={styles.screenTopText}>STATUS</Text>
-              <View style={styles.statusLight} />
+              <Text style={styles.screenTopText}>DOT MATRIX WITH STEREO SOUND</Text>
             </View>
 
-            <View style={styles.screen}>
-              <View style={styles.screenTextBlock}>
-                <Text style={styles.screenLabel}>LAST SCAN</Text>
-                <Text style={styles.screenLine}>KEYS: NEAR DESK</Text>
-                <Text style={styles.screenLine}>WALLET: BY SOFA</Text>
-                <Text style={styles.screenLine}>NOTEBOOK: UNKNOWN</Text>
-              </View>
-
-              <View style={styles.roomMiniMap}>
-                {PIXEL_ROOM.map((row, rowIndex) => (
-                  <View key={rowIndex} style={styles.pixelRow}>
-                    {row.split('').map((cell, cellIndex) => {
-                      const colorIndex = Number(cell);
-                      return (
-                        <View
-                          key={`${rowIndex}-${cellIndex}`}
-                          style={[
-                            styles.pixelCell,
-                            { backgroundColor: PIXEL_COLORS[colorIndex] },
-                          ]}
-                        />
-                      );
-                    })}
-                  </View>
-                ))}
+            <View style={styles.screenBezel}>
+              <View style={styles.screen}>
+                <View style={styles.screenGlow} />
+                <View style={styles.screenOverlay} />
+                <View style={styles.screenTextBlock}>
+                  <Text style={styles.screenLabel}>{APP_NAME}</Text>
+                  <Text style={styles.screenLine}>{APP_TAGLINE}</Text>
+                  <Text style={styles.screenLine}>{APP_DESCRIPTION}</Text>
+                </View>
               </View>
             </View>
 
-            <View style={styles.screenBottomBar}>
-              <Text style={styles.screenBottomText}>{APP_DESCRIPTION}</Text>
+            <View style={styles.logoRow}>
+              <Text style={styles.logoText}>Nintendo</Text>
+              <Text style={styles.gameBoyText}>GAME BOY</Text>
             </View>
           </View>
 
-          <View style={styles.controlsRow}>
-            <View style={styles.dPad}>
-              <View style={[styles.dPadArm, styles.dPadArmVertical]} />
-              <View style={[styles.dPadArm, styles.dPadArmHorizontal]} />
-              <View style={styles.dPadCenter} />
+          <View style={styles.controlsBlock}>
+            <View style={styles.controlsRow}>
+              <View style={styles.dPad}>
+                <View style={[styles.dPadArm, styles.dPadArmVertical]} />
+                <View style={[styles.dPadArm, styles.dPadArmHorizontal]} />
+                <View style={styles.dPadCenter} />
+              </View>
+
+              <View style={styles.actionArea}>
+                <View style={styles.actionButtons}>
+                  <View style={styles.actionButton} />
+                  <View style={[styles.actionButton, styles.actionButtonSecond]} />
+                </View>
+
+                <View style={styles.startSelectRow}>
+                  <View style={styles.startSelectButton} />
+                  <View style={styles.startSelectButton} />
+                </View>
+              </View>
             </View>
 
-            <View style={styles.actionButtons}>
-              <View style={styles.pillButton} />
-              <View style={[styles.pillButton, styles.pillButtonSecond]} />
+            <View style={styles.speakerRow}>
+              <View style={styles.speakerSlit} />
+              <View style={styles.speakerSlit} />
+              <View style={styles.speakerSlit} />
+              <View style={styles.speakerSlit} />
+              <View style={styles.speakerSlit} />
             </View>
           </View>
         </View>
@@ -127,210 +111,227 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 24,
     gap: 12,
   },
-  shell: {
+  device: {
     gap: 12,
     padding: 16,
-    borderRadius: 20,
-    backgroundColor: '#D8E6D5',
+    borderRadius: 28,
+    backgroundColor: '#F1F2EA',
     borderWidth: 2,
-    borderColor: '#9EB59C',
+    borderColor: '#B8B8A8',
     shadowColor: '#000',
     shadowOpacity: 0.18,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 14 },
   },
-  headerRow: {
+  topLabelRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#243C2F',
-    borderWidth: 2,
-    borderColor: '#E5F2E9',
+  powerLight: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: '#D33C33',
+    borderWidth: 1,
+    borderColor: '#8E211D',
   },
-  badgeText: {
-    color: '#E5F2E9',
-    fontSize: 11,
+  topLabel: {
+    fontSize: 18,
     fontWeight: '900',
-    letterSpacing: 1.4,
+    color: '#6E5C8B',
+    letterSpacing: 0.8,
     fontFamily: 'monospace',
   },
-  version: {
+  topVersion: {
     fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 1.4,
-    color: '#466355',
-    fontFamily: 'monospace',
-  },
-  title: {
-    fontSize: 30,
-    lineHeight: 32,
-    fontWeight: '900',
-    color: '#243C2F',
-    letterSpacing: 1.4,
-    fontFamily: 'monospace',
-    textTransform: 'uppercase',
-  },
-  tagline: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '800',
-    color: '#466355',
-    letterSpacing: 1.6,
-    textTransform: 'uppercase',
+    color: '#8C8C7C',
+    letterSpacing: 1,
     fontFamily: 'monospace',
   },
   screenFrame: {
     gap: 8,
-    padding: 10,
-    borderRadius: 16,
-    backgroundColor: '#2B4436',
-    borderWidth: 2,
-    borderColor: '#18261F',
+    alignItems: 'stretch',
   },
   screenTopBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 8,
   },
   screenTopText: {
-    fontSize: 11,
-    fontWeight: '900',
-    color: '#E5F2E9',
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#8A8397',
     letterSpacing: 1.4,
     fontFamily: 'monospace',
   },
-  statusLight: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#86EFAC',
-    borderWidth: 1,
-    borderColor: '#E5F2E9',
+  screenBezel: {
+    padding: 12,
+    borderRadius: 24,
+    backgroundColor: '#6C6781',
+    borderWidth: 2,
+    borderColor: '#4D4960',
   },
   screen: {
-    flexDirection: 'row',
-    gap: 10,
-    padding: 10,
-    borderRadius: 12,
-    backgroundColor: '#DCEFD8',
+    minHeight: 220,
+    borderRadius: 14,
+    backgroundColor: '#A6AF41',
     borderWidth: 2,
-    borderColor: '#A6BFA2',
+    borderColor: '#2F3523',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  screenGlow: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  screenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(27, 44, 18, 0.08)',
   },
   screenTextBlock: {
-    flex: 1,
-    gap: 4,
-    justifyContent: 'center',
+    width: '78%',
+    gap: 8,
+    alignItems: 'flex-start',
   },
   screenLabel: {
-    fontSize: 11,
+    fontSize: 22,
+    lineHeight: 24,
     fontWeight: '900',
-    letterSpacing: 1.2,
-    color: '#243C2F',
+    color: '#24321C',
+    letterSpacing: 0.8,
     fontFamily: 'monospace',
+    textTransform: 'uppercase',
   },
   screenLine: {
     fontSize: 11,
-    lineHeight: 15,
-    color: '#243C2F',
-    fontFamily: 'monospace',
-  },
-  roomMiniMap: {
-    alignSelf: 'center',
-    padding: 6,
-    backgroundColor: '#B8D0B5',
-    borderWidth: 2,
-    borderColor: '#7D957B',
-  },
-  pixelRow: {
-    flexDirection: 'row',
-  },
-  pixelCell: {
-    width: 9,
-    height: 9,
-    margin: 1,
-  },
-  screenBottomBar: {
-    paddingHorizontal: 4,
-  },
-  screenBottomText: {
-    fontSize: 10,
     lineHeight: 14,
-    color: '#466355',
+    color: '#24321C',
     fontFamily: 'monospace',
+  },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 6,
+    paddingLeft: 8,
+  },
+  logoText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#3A465A',
+    fontFamily: 'monospace',
+  },
+  gameBoyText: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#5B76A6',
+    letterSpacing: 0.8,
+    fontFamily: 'monospace',
+  },
+  controlsBlock: {
+    gap: 14,
+    paddingTop: 2,
   },
   controlsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingTop: 2,
+    alignItems: 'flex-end',
+    paddingHorizontal: 4,
   },
   dPad: {
-    width: 72,
-    height: 72,
+    width: 94,
+    height: 94,
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
   dPadArm: {
     position: 'absolute',
-    backgroundColor: '#243C2F',
+    backgroundColor: '#202020',
     borderWidth: 2,
-    borderColor: '#E5F2E9',
+    borderColor: '#0D0D0D',
   },
   dPadArmVertical: {
-    width: 18,
-    height: 64,
-    borderRadius: 5,
+    width: 22,
+    height: 78,
+    borderRadius: 7,
   },
   dPadArmHorizontal: {
-    width: 64,
-    height: 18,
-    borderRadius: 5,
+    width: 78,
+    height: 22,
+    borderRadius: 7,
   },
   dPadCenter: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    backgroundColor: '#163326',
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: '#111111',
     borderWidth: 2,
-    borderColor: '#E5F2E9',
+    borderColor: '#3D3D3D',
+  },
+  actionArea: {
+    gap: 18,
+    alignItems: 'center',
+    paddingRight: 2,
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 14,
     alignItems: 'center',
   },
-  pillButton: {
-    width: 26,
-    height: 48,
+  actionButton: {
+    width: 32,
+    height: 56,
     borderRadius: 999,
-    backgroundColor: '#E45A76',
+    backgroundColor: '#A61F31',
     borderWidth: 2,
-    borderColor: '#F8FAFC',
-    transform: [{ rotate: '-25deg' }],
+    borderColor: '#5A0D18',
+    transform: [{ rotate: '-27deg' }],
   },
-  pillButtonSecond: {
-    backgroundColor: '#5C7CFA',
-    transform: [{ rotate: '-25deg' }],
+  actionButtonSecond: {
+    backgroundColor: '#A61F31',
+  },
+  startSelectRow: {
+    flexDirection: 'row',
+    gap: 12,
+    transform: [{ rotate: '-10deg' }],
+  },
+  startSelectButton: {
+    width: 42,
+    height: 10,
+    borderRadius: 999,
+    backgroundColor: '#B8B6BC',
+    borderWidth: 1,
+    borderColor: '#86838A',
+  },
+  speakerRow: {
+    alignSelf: 'flex-end',
+    width: 92,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingRight: 8,
+    paddingBottom: 2,
+    transform: [{ rotate: '-16deg' }],
+  },
+  speakerSlit: {
+    width: 6,
+    height: 30,
+    borderRadius: 999,
+    backgroundColor: '#9B9A9F',
+    borderWidth: 1,
+    borderColor: '#6B6A70',
   },
   actionPanel: {
     gap: 10,
     padding: 14,
     borderRadius: 18,
-    backgroundColor: 'rgba(217, 230, 213, 0.9)',
+    backgroundColor: 'rgba(241, 242, 234, 0.92)',
     borderWidth: 2,
-    borderColor: '#9EB59C',
+    borderColor: '#B8B8A8',
   },
 });
