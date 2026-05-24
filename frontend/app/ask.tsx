@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   View,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -65,6 +66,7 @@ export default function AskScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<ScrollView | null>(null);
+  const animValuesRef = useRef<Record<string, Animated.Value>>({});
 
   const sampleQuestions = [
     'Where is my calculator?',
@@ -82,6 +84,22 @@ export default function AskScreen() {
     ]);
   }, []);
 
+  // animate new messages: create an Animated.Value for any new id and spring it to 1
+  useEffect(() => {
+    messages.forEach((m) => {
+      if (!animValuesRef.current[m.id]) {
+        const v = new Animated.Value(0);
+        animValuesRef.current[m.id] = v;
+        Animated.spring(v, {
+          toValue: 1,
+          useNativeDriver: true,
+          speed: 14,
+          bounciness: 6,
+        }).start();
+      }
+    });
+  }, [messages]);
+
   const sendMessage = async (messageText: string) => {
     const trimmed = messageText.trim();
     if (!trimmed || loading) return;
@@ -95,29 +113,32 @@ export default function AskScreen() {
     const replyId = `${Date.now()}-b`;
     try {
       const answer = await askQuestion(trimmed);
-      setMessages((m) => [
-        ...m,
-        {
-          id: replyId,
-          from: 'bot',
-          text: formatAskReply(answer),
-          meta: formatAskMeta(answer),
-          imageUrl: answer.image_url ?? undefined,
-        },
-      ]);
+      const botMsg: Message = {
+        id: replyId,
+        from: 'bot',
+        text: formatAskReply(answer),
+        meta: formatAskMeta(answer),
+        imageUrl: answer.image_url ?? undefined,
+      };
+
+      setTimeout(() => {
+        setMessages((m) => [...m, botMsg]);
+        setLoading(false);
+        scrollRef.current?.scrollToEnd({ animated: true });
+      }, 500);
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'Could not reach the server.';
-      setMessages((m) => [
-        ...m,
-        {
-          id: replyId,
-          from: 'bot',
-          text: `Error: ${detail}. Check that the backend is running and EXPO_PUBLIC_API_URL is set.`,
-        },
-      ]);
-    } finally {
-      setLoading(false);
-      scrollRef.current?.scrollToEnd({ animated: true });
+      const errMsg: Message = {
+        id: replyId,
+        from: 'bot',
+        text: `Error: ${detail}. Check that the backend is running and EXPO_PUBLIC_API_URL is set.`,
+      };
+
+      setTimeout(() => {
+        setMessages((m) => [...m, errMsg]);
+        setLoading(false);
+        scrollRef.current?.scrollToEnd({ animated: true });
+      }, 500);
     }
   };
 
@@ -152,32 +173,45 @@ export default function AskScreen() {
           ref={scrollRef}
           contentContainerStyle={styles.messages}
           showsVerticalScrollIndicator={false}>
-          {messages.map((m) => (
-            <View
+          {messages.map((m) => {
+            const anim = animValuesRef.current[m.id] ?? new Animated.Value(1);
+            const animatedStyle = {
+              opacity: anim,
+              transform: [
+                { scale: anim.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] }) },
+                { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [6, 0] }) },
+              ],
+            } as any;
+
+            return (
+              <View
                 key={m.id}
                 style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
-                <View style={[
-                  styles.messageContent,
-                  m.from === 'user' ? styles.messageContentUser : styles.messageContentBot,
-                ]}>
-                <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                  <Text
-                    style={[
-                      styles.messageText,
-                      m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
-                    ]}>
-                    {m.text}
-                  </Text>
+                <View
+                  style={[
+                    styles.messageContent,
+                    m.from === 'user' ? styles.messageContentUser : styles.messageContentBot,
+                  ]}>
+                  <Animated.View
+                    style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot, animatedStyle]}>
+                    <Text
+                      style={[
+                        styles.messageText,
+                        m.from === 'user' ? styles.messageTextUser : styles.messageTextBot,
+                      ]}>
+                      {m.text}
+                    </Text>
+                  </Animated.View>
                   {m.meta ? <Text style={styles.metaText}>{m.meta}</Text> : null}
+                  {m.imageUrl ? (
+                    <View style={styles.imageCard}>
+                      <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
+                    </View>
+                  ) : null}
                 </View>
-                {m.imageUrl ? (
-                  <View style={styles.imageCard}>
-                    <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
-                  </View>
-                ) : null}
               </View>
-            </View>
-          ))}
+            );
+          })}
         </ScrollView>
 
         <View style={styles.chipsOverlay} pointerEvents="box-none">
