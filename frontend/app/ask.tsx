@@ -8,13 +8,15 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import BackButton from '@/components/BackButton';
 
-type Message = { id: string; from: 'user' | 'bot'; text: string };
+type Box = { x: number; y: number; w: number; h: number };
+type Message = { id: string; from: 'user' | 'bot'; text: string; imageUrl?: string; box?: Box };
 
 export default function AskScreen() {
   const router = useRouter();
@@ -46,7 +48,7 @@ export default function AskScreen() {
     const replyId = `${Date.now()}-b`;
     const demo = generateDemoReply(trimmed);
     setTimeout(() => {
-      setMessages((m) => [...m, { id: replyId, from: 'bot', text: demo }]);
+      setMessages((m) => [...m, { id: replyId, from: 'bot', text: demo.text, imageUrl: demo.imageUrl, box: demo.box }]);
       scrollRef.current?.scrollToEnd({ animated: true });
     }, 700);
     scrollRef.current?.scrollToEnd({ animated: true });
@@ -61,10 +63,27 @@ export default function AskScreen() {
 
   function generateDemoReply(q: string) {
     const s = q.toLowerCase();
-    if (s.includes('calculator')) return "Example answer: You last had your calculator on the desk next to the monitor.";
-    if (s.includes('keys')) return "Example answer: Your keys were last seen on the hallway table near the door.";
-    if (s.includes('notebook')) return "Example answer: The notebook was last seen on the bookshelf in the study.";
-    return "Example answer: I would search recent scans and tell you where the item was last seen.";
+    // demo image (public Unsplash image)
+    const deskImage = 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo';
+    if (s.includes('calculator'))
+      return {
+        text: 'You last had your calculator on the desk next to the monitor.',
+        imageUrl: deskImage,
+        box: { x: 60, y: 50, w: 12, h: 10 },
+      };
+    if (s.includes('keys'))
+      return {
+        text: 'Your keys were last seen on the hallway table near the door.',
+        imageUrl: 'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo',
+        box: { x: 28, y: 65, w: 10, h: 8 },
+      };
+    if (s.includes('notebook'))
+      return {
+        text: 'The notebook was last seen on the bookshelf in the study.',
+        imageUrl: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=demo',
+        box: { x: 42, y: 30, w: 14, h: 12 },
+      };
+    return { text: 'I would search recent scans and tell you where the item was last seen.' };
   }
 
   return (
@@ -78,8 +97,31 @@ export default function AskScreen() {
         <ScrollView ref={scrollRef} contentContainerStyle={styles.messages} showsVerticalScrollIndicator={false}>
           {messages.map((m) => (
             <View key={m.id} style={[styles.messageRow, m.from === 'user' ? styles.messageRowUser : styles.messageRowBot]}>
-              <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-                <Text style={[styles.messageText, m.from === 'user' ? styles.messageTextUser : styles.messageTextBot]}>{m.text}</Text>
+              <View style={styles.messageContent}>
+                <View style={[styles.bubble, m.from === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
+                  <Text style={[styles.messageText, m.from === 'user' ? styles.messageTextUser : styles.messageTextBot]}>{m.text}</Text>
+                </View>
+
+                {m.imageUrl ? (
+                  <View style={styles.imageCard}>
+                    <Image source={{ uri: m.imageUrl }} style={styles.image} resizeMode="cover" />
+                    {m.box ? (
+                      <View
+                        pointerEvents="none"
+                        style={[
+                          styles.overlayBox,
+                          {
+                            left: `${m.box.x}%`,
+                            top: `${m.box.y}%`,
+                            width: `${m.box.w}%`,
+                            height: `${m.box.h}%`,
+                            borderRadius: Math.max(m.box.w, m.box.h) / 2,
+                          },
+                        ]}
+                      />
+                    ) : null}
+                  </View>
+                ) : null}
               </View>
             </View>
           ))}
@@ -164,12 +206,21 @@ const styles = StyleSheet.create({
   messageRow: { flexDirection: 'row' },
   messageRowUser: { justifyContent: 'flex-end' },
   messageRowBot: { justifyContent: 'flex-start' },
+  messageContent: { flexDirection: 'column', maxWidth: '80%' },
   bubble: { maxWidth: '80%', padding: 12, borderRadius: 12 },
   bubbleUser: { backgroundColor: '#F59E0B', borderBottomRightRadius: 4 },
   bubbleBot: { backgroundColor: 'rgba(255,255,255,0.04)', borderBottomLeftRadius: 4 },
   messageText: { fontSize: 14 },
   messageTextUser: { color: '#0F172A' },
   messageTextBot: { color: '#E6F0FF' },
+  imageCard: { marginTop: 8, width: '100%', height: 180, borderRadius: 12, overflow: 'hidden' },
+  image: { width: '100%', height: '100%' },
+  overlayBox: {
+    position: 'absolute',
+    borderWidth: 2,
+    borderColor: '#F59E0B',
+    backgroundColor: 'rgba(245,158,11,0.08)',
+  },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },
   input: {
     flex: 1,
