@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { colors } from '@/constants/theme';
 
 type PrimaryButtonProps = {
   label: string;
@@ -37,7 +38,7 @@ export function PrimaryButton({
       ]}>
       <View style={styles.inner}>
         <View style={[styles.iconWrap, isPrimary ? styles.iconWrapPrimary : styles.iconWrapSecondary]}>
-          <Ionicons name={icon} size={18} color={isPrimary ? '#0F172A' : '#F8FAFC'} />
+          <Ionicons name={icon} size={18} color={isPrimary ? colors.textDark : colors.textLight} />
         </View>
 
         <View style={styles.textWrap}>
@@ -62,12 +63,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   buttonPrimary: {
-    backgroundColor: '#D9E6D5',
-    borderColor: '#8FA78B',
+    backgroundColor: colors.buttonPrimaryBg,
+    borderColor: colors.buttonPrimaryBorder,
   },
   buttonSecondary: {
-    backgroundColor: '#EEF6EB',
-    borderColor: '#A4B7A0',
+    backgroundColor: colors.buttonSecondaryBg,
+    borderColor: colors.buttonSecondaryBorder,
   },
   iconWrap: {
     width: 38,
@@ -78,12 +79,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   iconWrapPrimary: {
-    backgroundColor: '#243C2F',
-    borderColor: '#E5F2E9',
+    backgroundColor: colors.iconWrapPrimaryBg,
+    borderColor: colors.iconWrapPrimaryBorder,
   },
   iconWrapSecondary: {
-    backgroundColor: '#D8E6D5',
-    borderColor: '#8FA78B',
+    backgroundColor: colors.iconWrapSecondaryBg,
+    borderColor: colors.iconWrapSecondaryBorder,
   },
   inner: {
     flexDirection: 'row',
@@ -103,10 +104,10 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   labelPrimary: {
-    color: '#243C2F',
+    color: colors.labelPrimary,
   },
   labelSecondary: {
-    color: '#243C2F',
+    color: colors.labelPrimary,
   },
   subtitle: {
     fontSize: 10,
@@ -114,9 +115,9 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
   subtitlePrimary: {
-    color: 'rgba(36, 60, 47, 0.8)',
+    color: colors.subtitlePrimary,
   },
   subtitleSecondary: {
-    color: '#5C725E',
+    color: colors.subtitleSecondary,
   },
 });

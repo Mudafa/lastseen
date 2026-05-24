@@ -1,41 +1,39 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import { colors } from '@/constants/theme';
 
-const STARS = [
-  { l: 12, t: 18, s: 3, o: 0.85 },
-  { l: 40, t: 8, s: 2, o: 0.75 },
-  { l: 68, t: 24, s: 3, o: 0.8 },
-  { l: 24, t: 62, s: 2, o: 0.7 },
-  { l: 80, t: 72, s: 3, o: 0.82 },
-  { l: 86, t: 16, s: 2, o: 0.76 },
-  { l: 58, t: 76, s: 2, o: 0.7 },
-  { l: 8, t: 78, s: 3, o: 0.68 },
-] as const;
+const { width, height } = Dimensions.get('window');
+
+const stars = Array.from({ length: 64 }).map((_, i) => {
+  const left = Math.random() * 100;
+  const top = Math.random() * 85; // keep stars above moon area
+  const size = Math.random() * 2 + 1;
+  const opacity = 0.3 + Math.random() * 0.9;
+  return { id: `s-${i}`, left, top, size, opacity };
+});
 
 export default function SpaceBackground({ children }: { children: React.ReactNode }) {
   return (
     <View style={styles.container}>
-      <View style={styles.sky} />
-      <View style={styles.softGlowTop} />
-      <View style={styles.softGlowBottom} />
-      <View style={styles.grid} />
-      <View style={styles.scanline} />
-      {STARS.map((s, i) => (
+      <View style={styles.wallpaperTop} />
+      <View style={styles.wallpaperMid} />
+      <View style={styles.wallpaperBottom} />
+
+      {stars.map(s => (
         <View
-          key={i}
-          pointerEvents="none"
+          key={s.id}
           style={[
             styles.star,
-            {
-              left: `${s.l}%`,
-              top: `${s.t}%`,
-              width: s.s,
-              height: s.s,
-              opacity: s.o,
-            },
+            { left: `${s.left}%`, top: `${s.top}%`, width: s.size, height: s.size, opacity: s.opacity },
           ]}
         />
       ))}
+
+      <View style={styles.bigMoon} />
+
+      <View style={styles.softGlowTop} />
+      <View style={styles.softGlowBottom} />
+
       <View style={styles.content} pointerEvents="box-none">
         {children}
       </View>
@@ -46,51 +44,80 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D8E0D6',
+    backgroundColor: colors.backgroundDeep,
   },
-  sky: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#D8E0D6',
-  },
-  softGlowTop: {
-    position: 'absolute',
-    left: -30,
-    top: -30,
-    width: 180,
-    height: 180,
-    backgroundColor: 'rgba(140, 162, 137, 0.14)',
-    borderRadius: 180,
-  },
-  softGlowBottom: {
-    position: 'absolute',
-    right: -30,
-    bottom: -30,
-    width: 200,
-    height: 200,
-    backgroundColor: 'rgba(92, 114, 94, 0.09)',
-    borderRadius: 200,
-  },
-  grid: {
-    ...StyleSheet.absoluteFillObject,
-    opacity: 0.08,
-    backgroundColor: 'transparent',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(92, 114, 94, 0.08)',
-    borderLeftWidth: 1,
-    borderLeftColor: 'rgba(92, 114, 94, 0.04)',
-  },
-  scanline: {
+  wallpaperTop: {
     position: 'absolute',
     left: 0,
     right: 0,
-    top: '50%',
-    height: 1,
-    backgroundColor: 'rgba(36, 60, 47, 0.06)',
+    top: 0,
+    height: '40%',
+    backgroundColor: colors.wallpaperTop,
+  },
+  wallpaperMid: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '30%',
+    height: '40%',
+    backgroundColor: colors.wallpaperMid,
+    opacity: 0.98,
+  },
+  wallpaperBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '50%',
+    backgroundColor: colors.wallpaperBottom,
   },
   star: {
     position: 'absolute',
-    borderRadius: 0,
-    backgroundColor: '#2F4A3A',
+    backgroundColor: colors.star,
+    borderRadius: 2,
+  },
+  bigMoon: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: -height * 0.03,
+    width: width * 0.96,
+    height: width * 0.55,
+    borderRadius: width * 0.48,
+    backgroundColor: 'rgba(243,229,247,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    shadowColor: '#000',
+    shadowOpacity: 0.22,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 12 },
+  },
+  waveTop: {
+    position: 'absolute',
+    top: '10%',
+    left: -30,
+    right: -30,
+    height: 120,
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    borderRadius: 200,
+    transform: [{ scaleX: 1.6 }],
+  },
+  softGlowTop: {
+    position: 'absolute',
+    left: -40,
+    top: -40,
+    width: 220,
+    height: 220,
+    backgroundColor: colors.softGlowTop,
+    borderRadius: 220,
+  },
+  softGlowBottom: {
+    position: 'absolute',
+    right: -40,
+    bottom: -40,
+    width: 260,
+    height: 260,
+    backgroundColor: colors.softGlowBottom,
+    borderRadius: 260,
   },
   content: {
     ...StyleSheet.absoluteFillObject,

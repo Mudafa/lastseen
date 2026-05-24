@@ -3,17 +3,18 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import SpaceBackground from '../components/SpaceBackground';
+import { colors } from '@/constants/theme';
 
-const LastSeenTheme = {
-  ...DarkTheme,
-  colors: {
-    ...DarkTheme.colors,
-    background: 'transparent',
-    card: '#0B1224',
-    primary: '#F59E0B',
-    text: '#E6F0FF',
-  },
-};
+  const LastSeenTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: 'transparent',
+      card: '#0B1224',
+      primary: colors.primary,
+      text: colors.textLight,
+    },
+  };
 
 export default function RootLayout() {
   return (

@@ -35,6 +35,7 @@ export default function CameraScreen() {
 
   const { warnings, isOffline } = useDeviceWarnings();
 
+
   scanningRef.current = scanning;
 
   const captureAndUpload = useCallback(async () => {
@@ -127,6 +128,7 @@ export default function CameraScreen() {
         )}
       </View>
 
+      {/* square camera preview centered */}
       <View style={styles.previewWrap}>
         <CameraView ref={cameraRef} style={styles.preview} facing="back" />
         {uploading ? (
@@ -242,12 +244,14 @@ const styles = StyleSheet.create({
   liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#EF4444' },
   liveText: { color: '#0F172A', fontSize: 12, fontWeight: '700' },
   previewWrap: {
-    marginHorizontal: 16,
-    height: 220,
-    borderRadius: 16,
+    width: '86%',
+    aspectRatio: 1,
+    marginTop: 12,
+    borderRadius: 20,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.08)',
+    alignSelf: 'center',
   },
   preview: { flex: 1 },
   previewOverlay: {
@@ -258,6 +262,8 @@ const styles = StyleSheet.create({
   },
   panel: { flex: 1 },
   panelContent: { padding: 16, gap: 14, paddingBottom: 32 },
+
+  
   warningBox: {
     flexDirection: 'row',
     gap: 8,

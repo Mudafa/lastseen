@@ -1,104 +1,34 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
-import { PrimaryButton } from '@/components/primary-button';
-import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from '@/constants/app';
+import { colors } from '@/constants/theme';
+import SpaceBackground from '@/components/SpaceBackground';
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  const handleCameraMode = () => {
-    router.push('/camera');
-  };
-
-  const handleAskMode = () => {
-    router.push('/ask');
-  };
+  const handleCameraMode = () => router.push('/camera');
+  const handleAskMode = () => router.push('/ask');
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.device}>
-          <View style={styles.topLabelRow}>
-            <View style={styles.powerLight} />
-            <Text style={styles.topLabel}>Nintendo GAME BOY</Text>
-            <Text style={styles.topVersion}>DMG-01</Text>
-          </View>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+      <SpaceBackground>
+        <View style={styles.fullContainer}>
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.bigButton} onPress={handleCameraMode}>
+              <Ionicons name="camera" size={24} color={colors.primary} />
+              <Text style={styles.buttonLabel}>Camera</Text>
+            </Pressable>
 
-          <View style={styles.screenFrame}>
-            <View style={styles.screenTopBar}>
-              <Text style={styles.screenTopText}>DOT MATRIX WITH STEREO SOUND</Text>
-            </View>
-
-            <View style={styles.screenBezel}>
-              <View style={styles.screen}>
-                <View style={styles.screenGlow} />
-                <View style={styles.screenOverlay} />
-                <View style={styles.screenTextBlock}>
-                  <Text style={styles.screenLabel}>{APP_NAME}</Text>
-                  <Text style={styles.screenLine}>{APP_TAGLINE}</Text>
-                  <Text style={styles.screenLine}>{APP_DESCRIPTION}</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.logoRow}>
-              <Text style={styles.logoText}>Nintendo</Text>
-              <Text style={styles.gameBoyText}>GAME BOY</Text>
-            </View>
-          </View>
-
-          <View style={styles.controlsBlock}>
-            <View style={styles.controlsRow}>
-              <View style={styles.dPad}>
-                <View style={[styles.dPadArm, styles.dPadArmVertical]} />
-                <View style={[styles.dPadArm, styles.dPadArmHorizontal]} />
-                <View style={styles.dPadCenter} />
-              </View>
-
-              <View style={styles.actionArea}>
-                <View style={styles.actionButtons}>
-                  <View style={styles.actionButton} />
-                  <View style={[styles.actionButton, styles.actionButtonSecond]} />
-                </View>
-
-                <View style={styles.startSelectRow}>
-                  <View style={styles.startSelectButton} />
-                  <View style={styles.startSelectButton} />
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.speakerRow}>
-              <View style={styles.speakerSlit} />
-              <View style={styles.speakerSlit} />
-              <View style={styles.speakerSlit} />
-              <View style={styles.speakerSlit} />
-              <View style={styles.speakerSlit} />
-            </View>
+            <Pressable style={styles.bigButton} onPress={handleAskMode}>
+              <Ionicons name="search" size={24} color={colors.primary} />
+              <Text style={styles.buttonLabel}>Ask</Text>
+            </Pressable>
           </View>
         </View>
-
-        <View style={styles.actionPanel}>
-          <PrimaryButton
-            label="Camera"
-            subtitle="Capture a new scan"
-            icon="camera"
-            variant="primary"
-            onPress={handleCameraMode}
-          />
-          <PrimaryButton
-            label="Ask"
-            subtitle="Look things up"
-            icon="search"
-            variant="secondary"
-            onPress={handleAskMode}
-          />
-        </View>
-      </ScrollView>
+      </SpaceBackground>
     </SafeAreaView>
   );
 }
@@ -110,23 +40,76 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingTop: 18,
     paddingBottom: 24,
-    gap: 12,
+    justifyContent: 'space-between',
   },
-  device: {
-    gap: 12,
-    padding: 16,
-    borderRadius: 28,
-    backgroundColor: '#ECEDE3',
-    borderWidth: 2,
-    borderColor: '#AFAF9D',
+  centerContent: { alignItems: 'center', marginTop: 6 },
+  fullContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  buttonRow: { flexDirection: 'row', gap: 20 },
+  bigButton: { width: 160, height: 64, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.06)', alignItems: 'center', justifyContent: 'center' },
+  buttonLabel: { color: colors.textLight, marginTop: 6, fontWeight: '700' },
+  greeting: { color: colors.textMuted, fontSize: 16, marginBottom: 6 },
+  bigTime: { color: colors.textLight, fontSize: 48, fontWeight: '700' },
+  alarmChip: { marginTop: 8, backgroundColor: 'rgba(255,255,255,0.06)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, flexDirection: 'row', alignItems: 'center' },
+  alarmText: { color: colors.textLight, marginLeft: 6, fontSize: 12 },
+  statusRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  coinCounter: { flexDirection: 'row', alignItems: 'center', gap: 6, marginRight: 6 },
+  coinDot: { width: 12, height: 12, borderRadius: 8, backgroundColor: colors.retroCoin, borderWidth: 1, borderColor: '#E6A800' },
+  coinCount: { color: colors.textDark, fontWeight: '800' },
+  searchBar: {
+    margin: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(0,0,0,0.03)',
+    padding: 10,
+    borderRadius: 12,
+  },
+  searchText: { color: colors.muted, marginLeft: 6 },
+  moonArea: { alignItems: 'center', marginTop: -20 },
+  pillButton: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: colors.buttonPrimaryBg, paddingHorizontal: 18, paddingVertical: 12, borderRadius: 28, borderWidth: 1, borderColor: colors.buttonPrimaryBorder },
+  pillLabel: { color: colors.backgroundDeep, fontWeight: '800', marginLeft: 6 },
+  description: { color: colors.textMuted, marginTop: 12, textAlign: 'center', paddingHorizontal: 24 },
+  actionRow: { flexDirection: 'row', gap: 18, marginTop: 18 },
+  headerAction: { alignItems: 'center', width: '45%' },
+  headerActionIcon: { width: 76, height: 76, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.04)', alignItems: 'center', justifyContent: 'center' },
+  headerActionLabel: { color: colors.textMuted, marginTop: 8 },
+  figure: { width: 140, height: 180, marginBottom: -24 },
+  grid: { paddingHorizontal: 12, gap: 18 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18 },
+  iconCard: { width: '30%', alignItems: 'center' },
+  iconCardDisabled: { width: '30%', alignItems: 'center', opacity: 0.5 },
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
-    shadowOpacity: 0.18,
-    shadowRadius: 22,
-    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
   },
+  /* 4-column variants */
+  iconRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 18 },
+  iconCard4: { width: '22%', alignItems: 'center' },
+  iconCircle4: { width: 64, height: 64, borderRadius: 14, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  iconLabel: { marginTop: 8, color: colors.textDark, fontWeight: '600' },
+  iconLabelMuted: { marginTop: 8, color: colors.muted },
+  topWidgets: { flexDirection: 'row', gap: 12, paddingHorizontal: 16, marginTop: 6 },
+  largeWidget: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 16, padding: 12, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 } },
+  widgetTitle: { fontSize: 12, color: colors.muted },
+  widgetValue: { fontSize: 28, fontWeight: '800', color: colors.textDark, marginTop: 6 },
+  widgetMeta: { fontSize: 12, color: colors.muted, marginTop: 4 },
+  smallWidget: { width: 88, height: 88, borderRadius: 14, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 } },
+  smallWidgetInner: { width: 60, height: 60, borderRadius: 12, backgroundColor: colors.primary },
+  bottomNav: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 28, paddingVertical: 18, alignItems: 'center' },
+  navItem: { alignItems: 'center' },
+  navLabel: { color: colors.textMuted, marginTop: 6, fontSize: 11 },
+  homeIndicator: { alignSelf: 'center', width: 134, height: 6, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.06)', marginTop: 10 },
   topLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -144,7 +127,7 @@ const styles = StyleSheet.create({
   topLabel: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#6E5C8B',
+    color: colors.muted,
     letterSpacing: 0.8,
     fontFamily: 'monospace',
   },
@@ -165,7 +148,7 @@ const styles = StyleSheet.create({
   screenTopText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#6F6A7C',
+    color: colors.muted,
     letterSpacing: 1.4,
     fontFamily: 'monospace',
   },
@@ -179,20 +162,20 @@ const styles = StyleSheet.create({
   screen: {
     minHeight: 220,
     borderRadius: 14,
-    backgroundColor: '#8E9738',
+    backgroundColor: colors.screenGreen,
     borderWidth: 2,
-    borderColor: '#262C1F',
+    borderColor: colors.screenBorder,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
   screenGlow: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: colors.screenGlow,
   },
   screenOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(27, 44, 18, 0.16)',
+    backgroundColor: colors.screenOverlay,
   },
   screenTextBlock: {
     width: '78%',
@@ -203,7 +186,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 24,
     fontWeight: '900',
-    color: '#182012',
+    color: colors.screenText,
     letterSpacing: 0.8,
     fontFamily: 'monospace',
     textTransform: 'uppercase',
@@ -211,7 +194,7 @@ const styles = StyleSheet.create({
   screenLine: {
     fontSize: 11,
     lineHeight: 14,
-    color: '#182012',
+    color: colors.screenText,
     fontFamily: 'monospace',
   },
   logoRow: {
@@ -332,6 +315,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'rgba(232, 233, 221, 0.94)',
     borderWidth: 2,
-    borderColor: '#AFAF9D',
+    borderColor: colors.shellBorder,
   },
 });
