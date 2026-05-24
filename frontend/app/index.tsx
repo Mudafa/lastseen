@@ -44,6 +44,50 @@ export default function HomeScreen() {
           <Text style={styles.tagline}>{APP_TAGLINE}</Text>
           <Text style={styles.description}>{APP_DESCRIPTION}</Text>
 
+          <View style={styles.heroVisual}>
+            <View style={styles.visualCard}>
+              <View style={styles.visualHeader}>
+                <View style={styles.liveBadge}>
+                  <View style={styles.liveDot} />
+                  <Text style={styles.liveBadgeText}>Live room map</Text>
+                </View>
+                <Text style={styles.visualMeta}>last scan 2m ago</Text>
+              </View>
+
+              <View style={styles.visualBody}>
+                <View style={styles.objectStack}>
+                  <View style={styles.objectPillPrimary}>
+                    <Ionicons name="key" size={14} color="#0F172A" />
+                    <Text style={styles.objectPillTextPrimary}>Keys near the desk</Text>
+                  </View>
+                  <View style={styles.objectPillSecondary}>
+                    <Ionicons name="wallet" size={14} color="#E6F0FF" />
+                    <Text style={styles.objectPillTextSecondary}>Wallet by the couch</Text>
+                  </View>
+                </View>
+
+                <View style={styles.visualChart}>
+                  <View style={styles.chartAccent} />
+                  <View style={styles.chartGrid} />
+                  <View style={styles.chartDotTop} />
+                  <View style={styles.chartDotBottom} />
+                </View>
+              </View>
+
+              <View style={styles.visualFooter}>
+                <View style={styles.footerChip}>
+                  <Text style={styles.footerChipText}>Camera</Text>
+                </View>
+                <View style={styles.footerChipDim}>
+                  <Text style={styles.footerChipTextDim}>Ask</Text>
+                </View>
+                <View style={styles.footerChipDim}>
+                  <Text style={styles.footerChipTextDim}>Search</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
           <View style={styles.metricsRow}>
             {METRICS.map((metric) => (
               <View key={metric.label} style={styles.metricCard}>
@@ -162,6 +206,171 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#94A3B8',
   },
+  heroVisual: {
+    paddingTop: 2,
+  },
+  visualCard: {
+    gap: 14,
+    padding: 14,
+    borderRadius: 22,
+    backgroundColor: 'rgba(5, 10, 24, 0.84)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+  },
+  visualHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  liveBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.18)',
+  },
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 999,
+    backgroundColor: '#34D399',
+  },
+  liveBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#CFFAE6',
+    letterSpacing: 0.3,
+  },
+  visualMeta: {
+    fontSize: 11,
+    color: '#64748B',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  visualBody: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'stretch',
+  },
+  objectStack: {
+    flex: 1,
+    gap: 10,
+    justifyContent: 'center',
+  },
+  objectPillPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 16,
+    backgroundColor: '#F59E0B',
+  },
+  objectPillTextPrimary: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  objectPillSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 16,
+    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  objectPillTextSecondary: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '700',
+    color: '#D8E4F4',
+  },
+  visualChart: {
+    width: 108,
+    borderRadius: 18,
+    backgroundColor: 'rgba(13, 18, 36, 0.92)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
+    overflow: 'hidden',
+    minHeight: 124,
+    position: 'relative',
+  },
+  chartAccent: {
+    position: 'absolute',
+    right: -16,
+    top: -16,
+    width: 76,
+    height: 76,
+    borderRadius: 76,
+    backgroundColor: 'rgba(245, 158, 11, 0.22)',
+  },
+  chartGrid: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'transparent',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  chartDotTop: {
+    position: 'absolute',
+    left: 18,
+    top: 28,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#F59E0B',
+  },
+  chartDotBottom: {
+    position: 'absolute',
+    left: 36,
+    bottom: 22,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#34D399',
+  },
+  visualFooter: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  footerChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#F59E0B',
+  },
+  footerChipDim: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  footerChipText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  footerChipTextDim: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#94A3B8',
+  },
   metricsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -219,9 +428,9 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 14,
     borderRadius: 18,
-    backgroundColor: 'rgba(7, 16, 41, 0.72)',
+    backgroundColor: 'rgba(7, 16, 41, 0.82)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.06)',
+    borderColor: 'rgba(255, 255, 255, 0.07)',
   },
   featureIcon: {
     width: 38,
@@ -229,7 +438,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    backgroundColor: 'rgba(245, 158, 11, 0.16)',
   },
   featureCopy: {
     flex: 1,
