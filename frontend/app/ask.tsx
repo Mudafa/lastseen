@@ -154,7 +154,7 @@ export default function AskScreen() {
         <View style={styles.inputRow}>
           <TextInput
             placeholder="Ask where something is..."
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#475569"
             value={text}
             onChangeText={setText}
             style={styles.input}
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerSpacer: { width: 24 },
-  title: { fontSize: 18, fontWeight: '700', color: '#E6F0FF', flex: 1 },
+  title: { fontSize: 18, fontWeight: '700', color: '#0F172A', flex: 1 },
   container: { flex: 1, paddingHorizontal: 16, paddingBottom: 8 },
   chipsOverlay: {
     position: 'absolute',
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipPressedSmall: { opacity: 0.9 },
-  chipTextSmall: { color: '#94A3B8', fontSize: 12, fontWeight: '600' },
+  chipTextSmall: { color: '#0F172A', fontSize: 12, fontWeight: '600' },
   messages: { paddingVertical: 12, gap: 8, paddingBottom: 96 },
   messageRow: { flexDirection: 'row' },
   messageRowUser: { justifyContent: 'flex-end' },
@@ -217,14 +217,14 @@ const styles = StyleSheet.create({
   },
   messageText: { fontSize: 14, lineHeight: 20 },
   messageTextUser: { color: '#0F172A' },
-  messageTextBot: { color: '#E6F0FF' },
+  messageTextBot: { color: '#0F172A' },
   imageCard: { marginTop: 8, width: '100%', height: 200, borderRadius: 10, overflow: 'hidden' },
   image: { width: '100%', height: '100%' },
   inputRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: 8 },
   input: {
     flex: 1,
     backgroundColor: 'rgba(255,255,255,0.04)',
-    color: '#E6F0FF',
+    color: '#0F172A',
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,

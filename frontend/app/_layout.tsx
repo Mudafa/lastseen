@@ -19,7 +19,13 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={LastSeenTheme}>
       <SpaceBackground>
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: 'transparent' },
+            animation: 'slide_from_right',
+            animationDuration: 140,
+          }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="camera" />
           <Stack.Screen name="ask" />

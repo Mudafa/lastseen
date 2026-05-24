@@ -46,11 +46,11 @@ export default function SpaceBackground({ children }: { children: React.ReactNod
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6EFE4',
+    backgroundColor: '#D8E0D6',
   },
   sky: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#E6EFE4',
+    backgroundColor: '#D8E0D6',
   },
   softGlowTop: {
     position: 'absolute',
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     top: -30,
     width: 180,
     height: 180,
-    backgroundColor: 'rgba(166, 191, 162, 0.18)',
+    backgroundColor: 'rgba(140, 162, 137, 0.14)',
     borderRadius: 180,
   },
   softGlowBottom: {
@@ -67,17 +67,17 @@ const styles = StyleSheet.create({
     bottom: -30,
     width: 200,
     height: 200,
-    backgroundColor: 'rgba(92, 114, 94, 0.12)',
+    backgroundColor: 'rgba(92, 114, 94, 0.09)',
     borderRadius: 200,
   },
   grid: {
     ...StyleSheet.absoluteFillObject,
-    opacity: 0.12,
+    opacity: 0.08,
     backgroundColor: 'transparent',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(92, 114, 94, 0.1)',
+    borderTopColor: 'rgba(92, 114, 94, 0.08)',
     borderLeftWidth: 1,
-    borderLeftColor: 'rgba(92, 114, 94, 0.06)',
+    borderLeftColor: 'rgba(92, 114, 94, 0.04)',
   },
   scanline: {
     position: 'absolute',
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: '50%',
     height: 1,
-    backgroundColor: 'rgba(36, 60, 47, 0.08)',
+    backgroundColor: 'rgba(36, 60, 47, 0.06)',
   },
   star: {
     position: 'absolute',

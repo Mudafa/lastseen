@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import React, { useState, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 
 type PrimaryButtonProps = {
   label: string;
@@ -21,39 +21,21 @@ export function PrimaryButton({
   style,
 }: PrimaryButtonProps) {
   const isPrimary = variant === 'primary';
-  const [hovered, setHovered] = useState(false);
-  const scale = useRef(new Animated.Value(1)).current;
 
-  const animateTo = (to: number, dur = 150) => {
-    Animated.timing(scale, { toValue: to, duration: dur, useNativeDriver: true }).start();
-  };
-
-  const handlePress = () => {
+  const handlePressIn = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress();
   };
 
   return (
     <Pressable
-      onPress={handlePress}
-      onHoverIn={() => {
-        setHovered(true);
-        animateTo(1.03);
-      }}
-      onHoverOut={() => {
-        setHovered(false);
-        animateTo(1);
-      }}
-      onPressIn={() => animateTo(0.98, 80)}
-      onPressOut={() => animateTo(hovered ? 1.03 : 1, 120)}
-      style={({ pressed }) => [
+      onPressIn={handlePressIn}
+      style={[
         styles.button,
         isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
-        hovered && styles.buttonHover,
-        pressed && styles.buttonPressed,
         style,
       ]}>
-      <Animated.View style={[styles.inner, { transform: [{ scale }] }]}>
+      <View style={styles.inner}>
         <View style={[styles.iconWrap, isPrimary ? styles.iconWrapPrimary : styles.iconWrapSecondary]}>
           <Ionicons name={icon} size={18} color={isPrimary ? '#0F172A' : '#F8FAFC'} />
         </View>
@@ -68,7 +50,7 @@ export function PrimaryButton({
         </View>
 
         <Ionicons name="chevron-forward" size={18} color={isPrimary ? '#0F172A' : '#94A3B8'} />
-      </Animated.View>
+      </View>
     </Pressable>
   );
 }
@@ -86,13 +68,6 @@ const styles = StyleSheet.create({
   buttonSecondary: {
     backgroundColor: '#EEF6EB',
     borderColor: '#A4B7A0',
-  },
-  buttonHover: {
-    opacity: 0.96,
-    borderColor: '#6F8B74',
-  },
-  buttonPressed: {
-    opacity: 0.92,
   },
   iconWrap: {
     width: 38,
